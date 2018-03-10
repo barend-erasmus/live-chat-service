@@ -3,6 +3,7 @@ import * as cors from 'cors';
 import * as express from 'express';
 import * as yargs from 'yargs';
 import { AuthenticationMiddleware } from './middleware/authentication';
+import { BaseRepository } from './repositories/sequelize/base';
 import { UserRouter } from './routes/user';
 
 const argv = yargs.argv;
@@ -17,6 +18,8 @@ app.route('/api/user/info').get(AuthenticationMiddleware.shouldBeAuthenticated, 
 app.listen(argv.port || 3000, () => {
     console.log(`listening on port ${argv.port || 3000}`);
 });
+
+new BaseRepository().sync();
 
 export {
     app,

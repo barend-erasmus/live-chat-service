@@ -22,10 +22,6 @@ export class Models {
                 allowNull: false,
                 type: Sequelize.NUMERIC,
             },
-            owner: {
-                allowNull: true,
-                type: Sequelize.STRING,
-            },
             sessionId: {
                 allowNull: false,
                 type: Sequelize.STRING,
@@ -33,11 +29,7 @@ export class Models {
         });
 
         const MessageModel = sequelize.define('message', {
-            from: {
-                allowNull: false,
-                type: Sequelize.STRING,
-            },
-            message: {
+            text: {
                 allowNull: false,
                 type: Sequelize.STRING,
             },
@@ -55,18 +47,14 @@ export class Models {
         });
 
         const TeamModel = sequelize.define('team', {
-            accepted: {
-                allowNull: false,
-                type: Sequelize.BOOLEAN,
-            },
             name: {
                 allowNull: false,
                 type: Sequelize.STRING,
             },
-            owner: {
-                allowNull: false,
-                type: Sequelize.STRING,
-            },
+        });
+
+        const TeamParticipantModel = sequelize.define('teamParticipant', {
+
         });
 
         const UserModel = sequelize.define('user', {
@@ -86,6 +74,10 @@ export class Models {
                 allowNull: false,
                 type: Sequelize.STRING,
             },
+            type: {
+                allowNull: false,
+                type: Sequelize.STRING,
+            },
         });
 
         TeamModel.hasMany(ApplicationModel, { foreignKey: { allowNull: true }, onDelete: 'CASCADE' });
@@ -99,6 +91,21 @@ export class Models {
 
         MessageModel.hasMany(MetaDatumModel, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
         MetaDatumModel.belongsTo(MessageModel, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+
+        UserModel.hasMany(ChatModel, { as: 'chatOwner', foreignKey: { allowNull: true, name: 'chatOwnerId' }, onDelete: 'CASCADE' });
+        ChatModel.belongsTo(UserModel, { as: 'chatOwner', foreignKey: { allowNull: true, name: 'chatOwnerId' }, onDelete: 'CASCADE' });
+
+        UserModel.hasMany(MessageModel, { as: 'messageSender', foreignKey: { allowNull: false, name: 'messageSenderId' }, onDelete: 'CASCADE' });
+        MessageModel.belongsTo(UserModel, { as: 'messageSender', foreignKey: { allowNull: false, name: 'messageSenderId' }, onDelete: 'CASCADE' });
+
+        UserModel.hasMany(TeamModel, { as: 'teamOwner', foreignKey: { allowNull: false, name: 'teamOwnerId' }, onDelete: 'CASCADE' });
+        TeamModel.belongsTo(UserModel, { as: 'teamOwner', foreignKey: { allowNull: false, name: 'teamOwnerId' }, onDelete: 'CASCADE' });
+
+        UserModel.hasMany(TeamParticipantModel, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+        TeamParticipantModel.belongsTo(UserModel, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+
+        TeamModel.hasMany(TeamParticipantModel, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+        TeamParticipantModel.belongsTo(TeamModel, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
 
         return {
             Application: ApplicationModel,

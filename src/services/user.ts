@@ -12,9 +12,11 @@ export class UserService {
     ) {
     }
 
-    public async find(userName: string): Promise<User> {
-        const user: User = await this.userRepository.findByUserName(userName);
+    public async login(user: User, token: string): Promise<User> {
+        let result: User = await this.userRepository.findByUserName(user.emailAddress);
 
-        return user;
+        result = !result ? await this.userRepository.create(user, token) : await this.userRepository.update(result, token);
+
+        return result;
     }
 }

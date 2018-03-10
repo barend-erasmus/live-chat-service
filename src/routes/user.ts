@@ -1,9 +1,10 @@
 import * as express from 'express';
 import * as request from 'request-promise';
+import { User } from '../entities/user';
+import { LiveChatError } from '../errors/live-chat-error';
 import { IOAuth2Gateway } from '../interfaces/oauth2-gateway';
 import { container } from '../ioc';
 import { UserService } from '../services/user';
-import { LiveChatError } from '../errors/live-chat-error';
 
 export class UserRouter {
 
@@ -14,7 +15,12 @@ export class UserRouter {
             try {
                 const userInfo: any = await container.get<IOAuth2Gateway>('IOAuth2Gateway').getUserInfo(req.get('Authorization'));
 
-                res.json(userInfo);
+                const user: User = await container.get<UserService>('UserService').login(new User(
+                    userInfo.email,
+                    userInfo.name,
+                ), token);
+
+                res.json(user);
             } catch (err) {
                 res.status(401).end();
             }

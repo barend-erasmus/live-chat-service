@@ -7,6 +7,7 @@ export class Models {
         Message: Sequelize.Model<{}, {}>,
         MetaDatum: Sequelize.Model<{}, {}>,
         Team: Sequelize.Model<{}, {}>,
+        TeamParticipant: Sequelize.Model<{}, {}>, 
         User: Sequelize.Model<{}, {}>,
     } {
 
@@ -74,10 +75,6 @@ export class Models {
                 allowNull: false,
                 type: Sequelize.STRING,
             },
-            type: {
-                allowNull: false,
-                type: Sequelize.STRING,
-            },
         });
 
         TeamModel.hasMany(ApplicationModel, { foreignKey: { allowNull: true }, onDelete: 'CASCADE' });
@@ -113,6 +110,7 @@ export class Models {
             Message: MessageModel,
             MetaDatum: MetaDatumModel,
             Team: TeamModel,
+            TeamParticipant: TeamParticipantModel,
             User: UserModel,
         };
     }

@@ -18,6 +18,7 @@ export class UserRouter {
                 const user: User = await container.get<UserService>('UserService').login(new User(
                     userInfo.email,
                     userInfo.name,
+                    null,
                 ), token);
 
                 res.json(user);

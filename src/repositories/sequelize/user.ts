@@ -20,6 +20,8 @@ export class UserRepository extends BaseRepository implements IUserRepository {
             token,
         });
 
+        user.id = result.id;
+
         return user;
     }
 

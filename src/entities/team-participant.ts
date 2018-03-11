@@ -6,7 +6,8 @@ export class TeamParticipant extends User {
         public accepted: boolean,
         emailAddress: string,
         displayName: string,
+        id: number,
     ) {
-        super(emailAddress, displayName);
+        super(emailAddress, displayName, id);
     }
 }

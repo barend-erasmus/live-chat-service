@@ -1,12 +1,13 @@
 import { Team } from './team';
+import { Entity } from './entity';
 
-export class Application {
+export class Application extends Entity {
 
     constructor(
-        public id: number,
+        id: number,
         public name: string,
         public team: Team,
     ) {
-
+        super(id);
     }
 }

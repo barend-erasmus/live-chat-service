@@ -5,23 +5,18 @@ import { TeamOwner } from '../entities/team-owner';
 import { container } from '../ioc';
 import { BaseRepository } from './sequelize/base';
 import { ITeamRepository } from './team';
-import { TestData } from './test-data';
 import { IUserRepository } from './user';
+import { setupTest } from '../test-base';
+import { TestData } from '../test-data';
 
 describe('TeamRepository', () => {
 
     let teamRepository: ITeamRepository = null;
-    let userRepository: IUserRepository = null;
 
     before(async () => {
-        const baseRepository: BaseRepository = new BaseRepository();
+        await setupTest();
 
         teamRepository = container.get<ITeamRepository>('ITeamRepository');
-        userRepository = container.get<IUserRepository>('IUserRepository');
-
-        await baseRepository.sync();
-
-        TestData.EXISTING_TEAM_OWNER = await userRepository.create(TestData.EXISTING_TEAM_OWNER, 'token');
     });
 
     describe('create', () => {

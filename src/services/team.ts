@@ -32,9 +32,13 @@ export class TeamService {
     }
 
     public async update(team: Team, userName: string): Promise<Team> {
-        const exisitingTeam: Team = await this.teamRepository.find(team.id);
+        const existingTeam: Team = await this.teamRepository.find(team.id);
 
-        if (exisitingTeam.owner.emailAddress !== userName) {
+        if (!existingTeam) {
+            throw new LiveChatError('not_found', 'Team does not exist.');
+        }
+
+        if (existingTeam.owner.emailAddress !== userName) {
             throw new LiveChatError('unauthorized', 'You are not the owner of this team.');
         }
 

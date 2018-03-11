@@ -3,11 +3,11 @@ import 'mocha';
 import { Team } from '../entities/team';
 import { TeamOwner } from '../entities/team-owner';
 import { container } from '../ioc';
+import { setupTest } from '../test-base';
+import { TestData } from '../test-data';
 import { BaseRepository } from './sequelize/base';
 import { ITeamRepository } from './team';
 import { IUserRepository } from './user';
-import { setupTest } from '../test-base';
-import { TestData } from '../test-data';
 
 describe('TeamRepository', () => {
 

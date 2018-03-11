@@ -1,8 +1,8 @@
-import { IUserRepository } from "./repositories/user";
-import { container } from "./ioc";
-import { BaseRepository } from "./repositories/sequelize/base";
-import { TestData } from "./test-data";
-import { ITeamRepository } from "./repositories/team";
+import { container } from './ioc';
+import { BaseRepository } from './repositories/sequelize/base';
+import { ITeamRepository } from './repositories/team';
+import { IUserRepository } from './repositories/user';
+import { TestData } from './test-data';
 
 export async function setupTest() {
     const teamRepository: ITeamRepository = container.get<ITeamRepository>('ITeamRepository');

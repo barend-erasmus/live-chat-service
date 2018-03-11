@@ -3,9 +3,9 @@ import 'mocha';
 import { Team } from '../entities/team';
 import { TeamOwner } from '../entities/team-owner';
 import { container } from '../ioc';
-import { TeamService } from './team';
 import { setupTest } from '../test-base';
 import { TestData } from '../test-data';
+import { TeamService } from './team';
 
 describe('TeamService', () => {
 
@@ -32,7 +32,7 @@ describe('TeamService', () => {
         it('should return team', async () => {
 
             const result: Team = await teamService.update(TestData.EXISTING_TEAM, TestData.EXISTING_TEAM_OWNER.emailAddress);
-    
+
             expect(result).to.be.not.null;
         });
 

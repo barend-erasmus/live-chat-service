@@ -4,8 +4,8 @@ import { TeamRepository } from './repositories/sequelize/team';
 import { UserRepository } from './repositories/sequelize/user';
 import { ITeamRepository } from './repositories/team';
 import { IUserRepository } from './repositories/user';
-import { UserService } from './services/user';
 import { TeamService } from './services/team';
+import { UserService } from './services/user';
 
 const container: Container = new Container();
 

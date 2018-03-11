@@ -1,5 +1,5 @@
-import { TeamOwner } from "./entities/team-owner";
-import { Team } from "./entities/team";
+import { Team } from './entities/team';
+import { TeamOwner } from './entities/team-owner';
 
 export class TestData {
 
@@ -9,5 +9,5 @@ export class TestData {
 
     public static NON_EXISTING_TEAM: Team = new Team(null, 'Non Existing Team', TestData.EXISTING_TEAM_OWNER, []);
     public static NON_EXISTING_TEAM_OWNER: TeamOwner = new TeamOwner('john.smith@example.com', 'John Smith', null);
-    
+
 }

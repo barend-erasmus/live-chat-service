@@ -1,5 +1,5 @@
-import { Team } from './team';
 import { Entity } from './entity';
+import { Team } from './team';
 
 export class Application extends Entity {
 

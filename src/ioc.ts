@@ -1,10 +1,10 @@
 import { Container, interfaces } from 'inversify';
 import 'reflect-metadata';
+import { TeamRepository } from './repositories/sequelize/team';
 import { UserRepository } from './repositories/sequelize/user';
+import { ITeamRepository } from './repositories/team';
 import { IUserRepository } from './repositories/user';
 import { UserService } from './services/user';
-import { ITeamRepository } from './repositories/team';
-import { TeamRepository } from './repositories/sequelize/team';
 
 const container: Container = new Container();
 

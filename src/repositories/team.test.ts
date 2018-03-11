@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 import 'mocha';
-import { ITeamRepository } from './team';
-import { container } from '../ioc';
 import { Team } from '../entities/team';
 import { TeamOwner } from '../entities/team-owner';
+import { container } from '../ioc';
+import { BaseRepository } from './sequelize/base';
+import { ITeamRepository } from './team';
 import { TestData } from './test-data';
 import { IUserRepository } from './user';
-import { BaseRepository } from './sequelize/base';
 
 describe('TeamRepository', () => {
 
@@ -38,9 +38,9 @@ describe('TeamRepository', () => {
             const createdTeam: Team = await teamRepository.create(TestData.NON_EXISTING_TEAM);
 
             const result: Team = await teamRepository.find(createdTeam.id);
-            
+
             expect(result).to.be.not.null;
         });
-        
+
     });
 });

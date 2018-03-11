@@ -1,10 +1,10 @@
-import * as Sequelize from 'sequelize';
-import { User } from '../../entities/user';
-import { Models } from './models';
 import { injectable } from 'inversify';
+import * as Sequelize from 'sequelize';
 import { Team } from '../../entities/team';
 import { TeamOwner } from '../../entities/team-owner';
 import { TeamParticipant } from '../../entities/team-participant';
+import { User } from '../../entities/user';
+import { Models } from './models';
 
 @injectable()
 export class BaseRepository {
@@ -15,7 +15,7 @@ export class BaseRepository {
         Message: Sequelize.Model<{}, {}>,
         MetaDatum: Sequelize.Model<{}, {}>,
         Team: Sequelize.Model<{}, {}>,
-        TeamParticipant: Sequelize.Model<{}, {}>, 
+        TeamParticipant: Sequelize.Model<{}, {}>,
         User: Sequelize.Model<{}, {}>,
     } = null;
 

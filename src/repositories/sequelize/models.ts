@@ -7,7 +7,7 @@ export class Models {
         Message: Sequelize.Model<{}, {}>,
         MetaDatum: Sequelize.Model<{}, {}>,
         Team: Sequelize.Model<{}, {}>,
-        TeamParticipant: Sequelize.Model<{}, {}>, 
+        TeamParticipant: Sequelize.Model<{}, {}>,
         User: Sequelize.Model<{}, {}>,
     } {
 

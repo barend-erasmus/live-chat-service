@@ -1,9 +1,9 @@
 import { injectable } from 'inversify';
 import 'reflect-metadata';
 import * as Sequelize from 'sequelize';
-import { BaseRepository } from './base';
-import { ITeamRepository } from '../team';
 import { Team } from '../../entities/team';
+import { ITeamRepository } from '../team';
+import { BaseRepository } from './base';
 
 @injectable()
 export class TeamRepository extends BaseRepository implements ITeamRepository {
@@ -34,13 +34,13 @@ export class TeamRepository extends BaseRepository implements ITeamRepository {
                 {
                     include: [
                         {
-                            model: BaseRepository.models.Team
+                            model: BaseRepository.models.Team,
                         },
                         {
-                            model: BaseRepository.models.User
-                        }
+                            model: BaseRepository.models.User,
+                        },
                     ],
-                    model: BaseRepository.models.TeamParticipant
+                    model: BaseRepository.models.TeamParticipant,
                 },
                 {
                     as: 'teamOwner',
@@ -58,8 +58,8 @@ export class TeamRepository extends BaseRepository implements ITeamRepository {
 
         return this.mapToTeam(result);
     }
-    
+
     public update(team: Team): Promise<Team> {
-        throw new Error("Method not implemented.");
+        throw new Error('Method not implemented.');
     }
 }

@@ -12,6 +12,12 @@ export class UserService {
     ) {
     }
 
+    public async list(): Promise<User[]> {
+        const result: User[] = await this.userRepository.list();
+
+        return result;
+    }
+
     public async login(user: User, token: string): Promise<User> {
         let result: User = await this.userRepository.findByUserName(user.emailAddress);
 

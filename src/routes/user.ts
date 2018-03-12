@@ -8,6 +8,16 @@ import { UserService } from '../services/user';
 
 export class UserRouter {
 
+    public static async get(req: express.Request, res: express.Response) {
+        try {
+            const result: User[] = await container.get<UserService>('UserService').list();
+
+            res.json(result);
+        } catch (err) {
+            res.status(500).json(LiveChatError.fromError(err));
+        }
+    }
+
     public static async info(req: express.Request, res: express.Response) {
         try {
             const token: string = UserRouter.getAuthorizationToken(req);

@@ -18,6 +18,9 @@ app.route('/api/team')
 .get(AuthenticationMiddleware.shouldBeAuthenticated, TeamRouter.get)
 .post(AuthenticationMiddleware.shouldBeAuthenticated, TeamRouter.post);
 
+app.route('/api/user')
+.get(AuthenticationMiddleware.shouldBeAuthenticated, UserRouter.get);
+
 app.route('/api/user/info').get(UserRouter.info);
 
 app.listen(argv.port || 3000, () => {

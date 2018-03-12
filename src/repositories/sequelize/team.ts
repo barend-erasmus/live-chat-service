@@ -2,6 +2,7 @@ import { injectable } from 'inversify';
 import 'reflect-metadata';
 import * as Sequelize from 'sequelize';
 import { Team } from '../../entities/team';
+import { ArrayHelper } from '../../helpers/array-helper';
 import { ITeamRepository } from '../team';
 import { BaseRepository } from './base';
 
@@ -79,9 +80,6 @@ export class TeamRepository extends BaseRepository implements ITeamRepository {
                 {
                     as: 'teamOwner',
                     model: BaseRepository.models.User,
-                    // where: {
-                    //     emailAddress: userName,
-                    // },
                 },
             ],
         });
@@ -115,8 +113,26 @@ export class TeamRepository extends BaseRepository implements ITeamRepository {
 
         result.name = team.name;
 
-        await result.save();
+        const participantsUpdateResult = ArrayHelper.updateArray<any>(result.teamParticipants, team.participants, (item: any) => item.id);
 
-        return team;
+        for (const participant of participantsUpdateResult.itemsToRemove) {
+            await participant.destroy();
+        }
+
+        for (const participant of participantsUpdateResult.itemsToAdd) {
+            await BaseRepository.models.TeamParticipant.create({
+                accepted: participant.accepted,
+                teamId: team.id,
+                userId: participant.id,
+            });
+        }
+
+        for (const participant of participantsUpdateResult.itemsToUpdate) {
+
+        }
+
+        const savedResult = await result.save();
+
+        return this.mapToTeam(savedResult);
     }
 }

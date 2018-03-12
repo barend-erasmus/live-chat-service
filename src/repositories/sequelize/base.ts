@@ -23,22 +23,25 @@ export class BaseRepository {
     protected static sequelize: Sequelize.Sequelize = null;
 
     constructor() {
-        if (!BaseRepository.sequelize) {
-
-            BaseRepository.sequelize = new Sequelize('live-chat', null, null, {
-                dialect: 'sqlite',
-                logging: false,
-                storage: 'database.sqlite',
-            });
-
-            BaseRepository.models = Models.define(BaseRepository.sequelize);
-        }
+        this.initialize();
     }
 
     public dispose(): void {
         if (BaseRepository.sequelize) {
             BaseRepository.sequelize.close();
             BaseRepository.sequelize = null;
+        }
+    }
+
+    public initialize(): void {
+        if (!BaseRepository.sequelize) {
+            BaseRepository.sequelize = new Sequelize('live-chat', null, null, {
+                dialect: 'sqlite',
+                logging: false,
+                // storage: 'database.sqlite',
+            });
+
+            BaseRepository.models = Models.define(BaseRepository.sequelize);
         }
     }
 

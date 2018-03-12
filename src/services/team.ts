@@ -4,6 +4,7 @@ import { Team } from '../entities/team';
 import { TeamOwner } from '../entities/team-owner';
 import { TeamParticipant } from '../entities/team-participant';
 import { LiveChatError } from '../errors/live-chat-error';
+import { ArrayHelper } from '../helpers/array-helper';
 import { ITeamRepository } from '../repositories/team';
 import { IUserRepository } from '../repositories/user';
 
@@ -54,6 +55,22 @@ export class TeamService {
         }
 
         existingTeam.name = team.name;
+
+        const participantsUpdateResult = ArrayHelper.updateArray<TeamParticipant>(existingTeam.participants, team.participants, (item: TeamParticipant) => item.id);
+
+        for (const participant of participantsUpdateResult.itemsToRemove) {
+            const index: number = existingTeam.participants.indexOf(participant);
+            existingTeam.participants = existingTeam.participants.splice(index, 1);
+        }
+
+        for (const participant of participantsUpdateResult.itemsToAdd) {
+            participant.accepted = false;
+            existingTeam.participants.push(participant);
+        }
+
+        for (const participant of participantsUpdateResult.itemsToUpdate) {
+
+        }
 
         team = await this.teamRepository.update(existingTeam);
 

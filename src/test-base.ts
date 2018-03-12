@@ -1,3 +1,5 @@
+import { TeamOwner } from './entities/team-owner';
+import { TeamParticipant } from './entities/team-participant';
 import { container } from './ioc';
 import { BaseRepository } from './repositories/sequelize/base';
 import { ITeamRepository } from './repositories/team';
@@ -10,11 +12,19 @@ export async function setupTest() {
 
     const baseRepository: BaseRepository = new BaseRepository();
 
+    baseRepository.dispose();
+
+    baseRepository.initialize();
+
     await baseRepository.sync();
 
-    TestData.EXISTING_TEAM_OWNER = await userRepository.create(TestData.EXISTING_TEAM_OWNER, 'token');
+    TestData.reinitialize();
 
-    TestData.EXISTING_TEAM_OWNER_OTHER = await userRepository.create(TestData.EXISTING_TEAM_OWNER_OTHER, 'token');
+    TestData.getInstance().EXISTING_TEAM_PARTICIPANT = (await userRepository.create(TestData.getInstance().EXISTING_TEAM_PARTICIPANT, 'token')) as TeamParticipant;
 
-    TestData.EXISTING_TEAM = await teamRepository.create(TestData.EXISTING_TEAM);
+    TestData.getInstance().EXISTING_TEAM_OWNER = (await userRepository.create(TestData.getInstance().EXISTING_TEAM_OWNER, 'token')) as TeamOwner;
+
+    TestData.getInstance().EXISTING_TEAM_OWNER_OTHER = (await userRepository.create(TestData.getInstance().EXISTING_TEAM_OWNER_OTHER, 'token')) as TeamOwner;
+
+    TestData.getInstance().EXISTING_TEAM = await teamRepository.create(TestData.getInstance().EXISTING_TEAM);
 }

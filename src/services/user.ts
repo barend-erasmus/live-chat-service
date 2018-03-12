@@ -19,4 +19,10 @@ export class UserService {
 
         return result;
     }
+
+    public async findByToken(token: string): Promise<User> {
+        const result: User = await this.userRepository.find(token);
+
+        return result;
+    }
 }

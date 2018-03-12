@@ -23,10 +23,12 @@ export class UserRouter {
 
                 res.json(user);
             } catch (err) {
+                console.error(err);
                 res.status(401).end();
             }
 
         } catch (err) {
+            console.error(err);
             res.status(500).json(LiveChatError.fromError(err));
         }
     }

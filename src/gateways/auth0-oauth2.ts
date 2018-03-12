@@ -12,7 +12,7 @@ export class Auth0OAuth2Gateway implements IOAuth2Gateway {
                 Authorization: authorizationHeader,
             },
             json: true,
-            uri: 'https://worldofrations.auth0.com/userinfo',
+            uri: 'https://developersworkspace.auth0.com/userinfo',
         });
 
         return response;

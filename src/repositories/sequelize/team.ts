@@ -69,6 +69,9 @@ export class TeamRepository extends BaseRepository implements ITeamRepository {
                         },
                         {
                             model: BaseRepository.models.User,
+                            where: {
+                                emailAddress: userName,
+                            },
                         },
                     ],
                     model: BaseRepository.models.TeamParticipant,
@@ -76,9 +79,9 @@ export class TeamRepository extends BaseRepository implements ITeamRepository {
                 {
                     as: 'teamOwner',
                     model: BaseRepository.models.User,
-                    where: {
-                        emailAddress: userName,
-                    },
+                    // where: {
+                    //     emailAddress: userName,
+                    // },
                 },
             ],
         });

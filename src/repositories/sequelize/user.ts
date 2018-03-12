@@ -45,21 +45,19 @@ export class UserRepository extends BaseRepository implements IUserRepository {
     }
 
     public async findByUserName(userName: string): Promise<User> {
-        const result: any[] = await BaseRepository.models.User.findAll({
-            limit: 1,
-            order: [['expiryTimestamp', 'DESC']],
+        const result: any = await BaseRepository.models.User.find({
             where: {
-                email: {
+                emailAddress: {
                     [Sequelize.Op.eq]: userName,
                 },
             },
         });
 
-        if (result.length < 1) {
+        if (!result) {
             return null;
         }
 
-        return this.mapToUser(result[0]);
+        return this.mapToUser(result);
     }
 
     public async update(user: User, token: string): Promise<User> {

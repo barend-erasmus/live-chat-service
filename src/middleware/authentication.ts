@@ -33,7 +33,6 @@ export class AuthenticationMiddleware {
             next();
 
         } catch (err) {
-            console.error(err);
             console.log(`${req.url} - 401`);
             res.status(401).end();
         }

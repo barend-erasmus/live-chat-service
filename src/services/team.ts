@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import { Team } from '../entities/team';
 import { TeamOwner } from '../entities/team-owner';
 import { TeamParticipant } from '../entities/team-participant';
+import { User } from '../entities/user';
 import { LiveChatError } from '../errors/live-chat-error';
 import { ArrayHelper } from '../helpers/array-helper';
 import { ITeamRepository } from '../repositories/team';
@@ -24,7 +25,13 @@ export class TeamService {
 
         team.participants = team.participants ? team.participants : [];
 
-        team.participants.push(new TeamParticipant(true, team.owner.emailAddress, team.owner.displayName, team.owner.id));
+        if (!team.participants.find((x) => x.id === team.owner.id)) {
+            team.participants.push(new TeamParticipant(true, team.owner.emailAddress, team.owner.displayName, team.owner.id));
+        }
+
+        for (const participant of team.participants) {
+            participant.accepted = false;
+        }
 
         team = await this.teamRepository.create(team);
 
@@ -44,13 +51,15 @@ export class TeamService {
     }
 
     public async update(team: Team, userName: string): Promise<Team> {
+        const user: User = await this.userRepository.findByUserName(userName);
+
         const existingTeam: Team = await this.teamRepository.find(team.id);
 
         if (!existingTeam) {
             throw new LiveChatError('not_found', 'Team does not exist.');
         }
 
-        if (existingTeam.owner.emailAddress !== userName) {
+        if (existingTeam.owner.id !== user.id) {
             throw new LiveChatError('unauthorized', 'You are not the owner of this team.');
         }
 

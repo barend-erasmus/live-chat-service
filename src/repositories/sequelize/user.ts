@@ -60,6 +60,14 @@ export class UserRepository extends BaseRepository implements IUserRepository {
         return this.mapToUser(result);
     }
 
+    public async list(): Promise<User[]> {
+        const result: any[] = await BaseRepository.models.User.findAll({
+
+        });
+
+        return result.map((user) => this.mapToUser(user));
+    }
+
     public async update(user: User, token: string): Promise<User> {
         const result: any = await BaseRepository.models.User.find({
             where: {

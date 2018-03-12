@@ -20,6 +20,26 @@ export class TeamService {
     ) {
     }
 
+    public async acceptTeam(teamId: number, userName: string): Promise<Team> {
+        const user: User = await this.userRepository.findByUserName(userName);
+
+        let team: Team = await this.teamRepository.find(teamId);
+
+        if (!team) {
+            throw new LiveChatError('not_found', 'Team does not exist.');
+        }
+
+        const teamParticipant: TeamParticipant = team.participants.find((participant) => participant.id === user.id);
+
+        if (!teamParticipant) {
+            throw new LiveChatError('not_found', 'You are not a participant of this team.');
+        }
+
+        team = await this.teamRepository.update(team);
+
+        return team;
+    }
+
     public async create(team: Team, userName: string): Promise<Team> {
         team.owner = await this.userRepository.findByUserName(userName);
 
@@ -69,7 +89,7 @@ export class TeamService {
 
         for (const participant of participantsUpdateResult.itemsToRemove) {
             const index: number = existingTeam.participants.indexOf(participant);
-            existingTeam.participants = existingTeam.participants.splice(index, 1);
+            existingTeam.participants.splice(index, 1);
         }
 
         for (const participant of participantsUpdateResult.itemsToAdd) {

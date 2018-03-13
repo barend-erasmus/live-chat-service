@@ -13,8 +13,10 @@ export class UserService {
     ) {
     }
 
-    public async list(): Promise<OperationResult<User[]>> {
-        const result: User[] = await this.userRepository.list();
+    public async list(query: string): Promise<OperationResult<User[]>> {
+        let result: User[] = await this.userRepository.list();
+
+        result = result.filter((user) => user.displayName.indexOf(query) > -1 || user.emailAddress.indexOf(query) > -1);
 
         return OperationResult.create<User[]>(result);
     }

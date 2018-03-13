@@ -12,11 +12,11 @@ export class UserRouter extends BaseRouter {
 
     public static async get(req: express.Request, res: express.Response) {
         try {
-            const result: OperationResult<User[]> = await container.get<UserService>('UserService').list();
+            const result: OperationResult<User[]> = await container.get<UserService>('UserService').list(req.query.query);
 
-            this.sendOperationResult(res, result);
+            UserRouter.sendOperationResult(res, result);
         } catch (err) {
-            res.status(500).json(LiveChatError.fromError(err));
+            UserRouter.sendError(err, res);
         }
     }
 
@@ -32,10 +32,10 @@ export class UserRouter extends BaseRouter {
                 null,
             ), token);
 
-            this.sendOperationResult(res, result);
+            UserRouter.sendOperationResult(res, result);
 
         } catch (err) {
-            res.status(500).json(LiveChatError.fromError(err));
+            UserRouter.sendError(err, res);
         }
     }
 

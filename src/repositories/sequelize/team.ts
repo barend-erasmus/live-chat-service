@@ -22,7 +22,13 @@ export class TeamRepository extends BaseRepository implements ITeamRepository {
                     userId: participant.id,
                 };
             }),
-        });
+        }, {
+                include: [
+                    {
+                        model: BaseRepository.models.TeamParticipant,
+                    },
+                ],
+            });
 
         team.id = result.id;
 
@@ -70,9 +76,6 @@ export class TeamRepository extends BaseRepository implements ITeamRepository {
                         },
                         {
                             model: BaseRepository.models.User,
-                            where: {
-                                emailAddress: userName,
-                            },
                         },
                     ],
                     model: BaseRepository.models.TeamParticipant,

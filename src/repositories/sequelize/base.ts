@@ -58,7 +58,7 @@ export class BaseRepository {
             team.id,
             team.name,
             new TeamOwner(team.teamOwner.emailAddress, team.teamOwner.displayName, team.teamOwner.id),
-            team.teamParticipants.map((participant) => new TeamParticipant(participant.accepted, participant.emailAddress, participant.displayName, participant.id)),
+            team.teamParticipants.map((participant) => new TeamParticipant(participant.accepted, participant.user.emailAddress, participant.user.displayName, participant.user.id)),
         );
     }
 

@@ -6,6 +6,7 @@ import { TeamParticipant } from '../entities/team-participant';
 import { User } from '../entities/user';
 import { LiveChatError } from '../errors/live-chat-error';
 import { ArrayHelper } from '../helpers/array-helper';
+import { OperationResult } from '../models/operation-result';
 import { ITeamRepository } from '../repositories/team';
 import { IUserRepository } from '../repositories/user';
 
@@ -20,27 +21,33 @@ export class TeamService {
     ) {
     }
 
-    public async acceptTeam(teamId: number, userName: string): Promise<Team> {
+    public async acceptTeam(teamId: number, userName: string): Promise<OperationResult<Team>> {
+        const result: OperationResult<Team> = OperationResult.create<Team>(null);
+
         const user: User = await this.userRepository.findByUserName(userName);
 
         let team: Team = await this.teamRepository.find(teamId);
 
         if (!team) {
-            throw new LiveChatError('not_found', 'Team does not exist.');
+            result.addMessage('not_found', null, 'Team does not exist.');
+            return result;
         }
 
         const teamParticipant: TeamParticipant = team.participants.find((participant) => participant.id === user.id);
 
         if (!teamParticipant) {
-            throw new LiveChatError('not_found', 'You are not a participant of this team.');
+            result.addMessage('not_found', null, 'You are not a participant of this team.');
+            return result;
         }
 
         team = await this.teamRepository.update(team);
 
-        return team;
+        result.setResult(team);
+
+        return result;
     }
 
-    public async create(team: Team, userName: string): Promise<Team> {
+    public async create(team: Team, userName: string): Promise<OperationResult<Team>> {
         team.owner = await this.userRepository.findByUserName(userName);
 
         team.participants = team.participants ? team.participants : [];
@@ -55,32 +62,36 @@ export class TeamService {
 
         team = await this.teamRepository.create(team);
 
-        return team;
+        return OperationResult.create<Team>(team);
     }
 
-    public async find(teamId: number, userName: string): Promise<Team> {
+    public async find(teamId: number, userName: string): Promise<OperationResult<Team>> {
         const team: Team = await this.teamRepository.find(teamId);
 
-        return team;
+        return OperationResult.create<Team>(team);
     }
 
-    public async list(userName: string): Promise<Team[]> {
+    public async list(userName: string): Promise<OperationResult<Team[]>> {
         const teams: Team[] = await this.teamRepository.list(userName);
 
-        return teams;
+        return OperationResult.create<Team[]>(teams);
     }
 
-    public async update(team: Team, userName: string): Promise<Team> {
+    public async update(team: Team, userName: string): Promise<OperationResult<Team>> {
+        const result: OperationResult<Team> = OperationResult.create<Team>(null);
+
         const user: User = await this.userRepository.findByUserName(userName);
 
         const existingTeam: Team = await this.teamRepository.find(team.id);
 
         if (!existingTeam) {
-            throw new LiveChatError('not_found', 'Team does not exist.');
+            result.addMessage('not_found', null, 'Team does not exist.');
+            return result;
         }
 
         if (existingTeam.owner.id !== user.id) {
-            throw new LiveChatError('unauthorized', 'You are not the owner of this team.');
+            result.addMessage('unauthorized', null, 'You are not the owner of this team.');
+            return result;
         }
 
         existingTeam.name = team.name;
@@ -103,6 +114,8 @@ export class TeamService {
 
         team = await this.teamRepository.update(existingTeam);
 
-        return team;
+        result.setResult(team);
+
+        return result;
     }
 }

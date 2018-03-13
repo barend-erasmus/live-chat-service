@@ -4,6 +4,7 @@ import * as yargs from 'yargs';
 import { User } from '../entities/user';
 import { LiveChatError } from '../errors/live-chat-error';
 import { container } from '../ioc';
+import { OperationResult } from '../models/operation-result';
 import { UserService } from '../services/user';
 
 export class AuthenticationMiddleware {
@@ -12,15 +13,15 @@ export class AuthenticationMiddleware {
         try {
             const argv = yargs.argv;
 
-            const user: User = await container.get<UserService>('UserService').findByToken(AuthenticationMiddleware.getAuthorizationToken(req));
+            const result: OperationResult<User> = await container.get<UserService>('UserService').findByToken(AuthenticationMiddleware.getAuthorizationToken(req));
 
-            if (user) {
-                req['user'] = user;
+            if (result.result) {
+                req['user'] = result.result;
                 next();
                 return;
             }
 
-            const result: any = await request({
+            const authenticationResponse: any = await request({
                 headers: {
                     Authorization: req.get('Authorization'),
                 },
@@ -28,7 +29,7 @@ export class AuthenticationMiddleware {
                 uri: `${argv.prod ? 'https://api.chat.developersworkpsace.co.za' : 'http://localhost:3000'}/api/user/info`,
             });
 
-            req['user'] = result;
+            req['user'] = authenticationResponse;
 
             next();
 

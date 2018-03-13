@@ -1,6 +1,7 @@
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
 import { User } from '../entities/user';
+import { OperationResult } from '../models/operation-result';
 import { IUserRepository } from '../repositories/user';
 
 @injectable()
@@ -12,23 +13,23 @@ export class UserService {
     ) {
     }
 
-    public async list(): Promise<User[]> {
+    public async list(): Promise<OperationResult<User[]>> {
         const result: User[] = await this.userRepository.list();
 
-        return result;
+        return OperationResult.create<User[]>(result);
     }
 
-    public async login(user: User, token: string): Promise<User> {
+    public async login(user: User, token: string): Promise<OperationResult<User>> {
         let result: User = await this.userRepository.findByUserName(user.emailAddress);
 
         result = !result ? await this.userRepository.create(user, token) : await this.userRepository.update(result, token);
 
-        return result;
+        return OperationResult.create<User>(result);
     }
 
-    public async findByToken(token: string): Promise<User> {
+    public async findByToken(token: string): Promise<OperationResult<User>> {
         const result: User = await this.userRepository.find(token);
 
-        return result;
+        return OperationResult.create<User>(result);
     }
 }

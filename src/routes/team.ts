@@ -18,7 +18,7 @@ export class TeamRouter extends BaseRouter {
             } else {
                 const result: OperationResult<Team[]> = await container.get<TeamService>('TeamService').list(req['user']['emailAddress']);
 
-                this.sendOperationResult(res, result);
+                TeamRouter.sendOperationResult(res, result);
             }
         } catch (err) {
             res.status(500).json(LiveChatError.fromError(err));
@@ -29,7 +29,7 @@ export class TeamRouter extends BaseRouter {
         try {
             const result: OperationResult<Team> = await container.get<TeamService>('TeamService').create(req.body, req['user']['emailAddress']);
 
-            this.sendOperationResult(res, result);
+            TeamRouter.sendOperationResult(res, result);
         } catch (err) {
             res.status(500).json(LiveChatError.fromError(err));
         }

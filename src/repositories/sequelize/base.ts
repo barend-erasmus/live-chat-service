@@ -1,6 +1,7 @@
 import { injectable } from 'inversify';
 import 'reflect-metadata';
 import * as Sequelize from 'sequelize';
+import { Application } from '../../entities/application';
 import { Team } from '../../entities/team';
 import { TeamOwner } from '../../entities/team-owner';
 import { TeamParticipant } from '../../entities/team-participant';
@@ -52,6 +53,14 @@ export class BaseRepository {
                 resolve();
             });
         });
+    }
+
+    protected mapToApplication(application: any): Application {
+        return new Application(
+            application.id,
+            application.name,
+            this.mapToTeam(application.team),
+        );
     }
 
     protected mapToTeam(team: any): Team {

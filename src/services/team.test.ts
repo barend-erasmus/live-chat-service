@@ -39,7 +39,7 @@ describe('TeamService', () => {
 
         teamService = new TeamService(teamRepository, userRepository);
     });
-    
+
     describe('acceptTeam', () => {
 
         it('should return with validation message given non existing team', async () => {

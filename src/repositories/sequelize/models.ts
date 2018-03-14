@@ -55,7 +55,10 @@ export class Models {
         });
 
         const TeamParticipantModel = sequelize.define('teamParticipant', {
-
+            accepted: {
+                allowNull: false,
+                type: Sequelize.BOOLEAN,
+            },
         });
 
         const UserModel = sequelize.define('user', {

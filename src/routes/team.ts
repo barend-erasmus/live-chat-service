@@ -44,4 +44,14 @@ export class TeamRouter extends BaseRouter {
             res.status(500).json(LiveChatError.fromError(err));
         }
     }
+
+    public static async put(req: express.Request, res: express.Response) {
+        try {
+            const result: OperationResult<Team> = await container.get<TeamService>('TeamService').update(req.body, req['user']['emailAddress']);
+
+            TeamRouter.sendOperationResult(res, result);
+        } catch (err) {
+            res.status(500).json(LiveChatError.fromError(err));
+        }
+    }
 }

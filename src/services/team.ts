@@ -40,6 +40,8 @@ export class TeamService {
             return result;
         }
 
+        teamParticipant.accepted = true;
+
         team = await this.teamRepository.update(team);
 
         result.setResult(team);

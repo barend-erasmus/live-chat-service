@@ -38,6 +38,7 @@ export class BaseRepository {
             BaseRepository.sequelize = new Sequelize('live-chat', null, null, {
                 dialect: 'sqlite',
                 logging: false,
+                operatorsAliases: false,
                 // storage: 'database.sqlite',
             });
 

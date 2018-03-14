@@ -16,7 +16,8 @@ app.use(cors());
 
 app.route('/api/team')
 .get(AuthenticationMiddleware.shouldBeAuthenticated, TeamRouter.get)
-.post(AuthenticationMiddleware.shouldBeAuthenticated, TeamRouter.post);
+.post(AuthenticationMiddleware.shouldBeAuthenticated, TeamRouter.post)
+.put(AuthenticationMiddleware.shouldBeAuthenticated, TeamRouter.put);
 
 app.route('/api/team/accept')
 .get(AuthenticationMiddleware.shouldBeAuthenticated, TeamRouter.accept);

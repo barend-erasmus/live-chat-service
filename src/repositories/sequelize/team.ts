@@ -19,6 +19,7 @@ export class TeamRepository extends BaseRepository implements ITeamRepository {
             teamOwnerId: team.owner.id,
             teamParticipants: team.participants.map((participant) => {
                 return {
+                    accepted: participant.accepted,
                     userId: participant.id,
                 };
             }),
@@ -30,9 +31,7 @@ export class TeamRepository extends BaseRepository implements ITeamRepository {
                 ],
             });
 
-        team.id = result.id;
-
-        return team;
+        return this.find(result.id);
     }
 
     public async find(teamId: number): Promise<Team> {
@@ -55,7 +54,9 @@ export class TeamRepository extends BaseRepository implements ITeamRepository {
                 },
             ],
             where: {
-                id: teamId,
+                id: {
+                    [Sequelize.Op.eq]: teamId,
+                },
             },
         });
 
@@ -110,7 +111,9 @@ export class TeamRepository extends BaseRepository implements ITeamRepository {
                 },
             ],
             where: {
-                id: team.id,
+                id: {
+                    [Sequelize.Op.eq]: team.id,
+                },
             },
         });
 
@@ -131,11 +134,24 @@ export class TeamRepository extends BaseRepository implements ITeamRepository {
         }
 
         for (const participant of participantsUpdateResult.itemsToUpdate) {
+            const teamParticipant: any = await BaseRepository.models.TeamParticipant.find({
+                where: {
+                    teamId: {
+                        [Sequelize.Op.eq]: team.id,
+                    },
+                    userId: {
+                        [Sequelize.Op.eq]: participant.id,
+                    },
+                },
+            });
 
+            teamParticipant.accepted = participant.accepted;
+
+            await teamParticipant.save();
         }
 
-        const savedResult = await result.save();
+        await result.save();
 
-        return this.mapToTeam(savedResult);
+        return this.find(team.id);
     }
 }

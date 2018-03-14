@@ -39,6 +39,46 @@ describe('TeamService', () => {
 
         teamService = new TeamService(teamRepository, userRepository);
     });
+    
+    describe('acceptTeam', () => {
+
+        it('should return with validation message given non existing team', async () => {
+            const result: OperationResult<Team> = await teamService.acceptTeam(1, 'email-address');
+
+            expect(result.messages[0].message).to.be.eq('Team does not exist.');
+        });
+
+        it('should return with validation message given non existing participant', async () => {
+            sinon.stub(teamRepository, 'find').returns(new Team(null, null, null, []));
+
+            const result: OperationResult<Team> = await teamService.acceptTeam(1, 'email-address');
+
+            expect(result.messages[0].message).to.be.eq('You are not a participant of this team.');
+        });
+
+        it('should return team', async () => {
+            sinon.stub(teamRepository, 'find').returns(new Team(null, null, null, [
+                new TeamParticipant(false, 'email-address', 'display-name', 1),
+            ]));
+
+            const result: OperationResult<Team> = await teamService.acceptTeam(1, 'email-address');
+
+            expect(result.result).to.be.not.null;
+        });
+
+        it('should set accepted to true', async () => {
+            sinon.stub(teamRepository, 'find').returns(new Team(null, null, null, [
+                new TeamParticipant(false, 'email-address', 'display-name', 1),
+            ]));
+
+            const teamRepositoryUpdate: sinon.SinonSpy = sinon.spy(teamRepository, 'update');
+
+            await teamService.acceptTeam(1, 'email-address');
+
+            expect(teamRepositoryUpdate.args[0][0].participants[0].accepted).to.be.true;
+        });
+
+    });
 
     describe('create', () => {
 

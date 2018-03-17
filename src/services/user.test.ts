@@ -3,7 +3,6 @@ import 'mocha';
 import * as sinon from 'sinon';
 
 import { User } from '../entities/user';
-import { container } from '../ioc';
 import { OperationResult } from '../models/operation-result';
 import { IUserRepository } from '../repositories/user';
 import { UserService } from './user';

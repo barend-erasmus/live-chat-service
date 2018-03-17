@@ -4,7 +4,6 @@ import 'reflect-metadata';
 import { Team } from '../entities/team';
 import { User } from '../entities/user';
 import { TeamParticipantView } from '../entity-views/team-participant';
-import { LiveChatError } from '../errors/live-chat-error';
 import { ArrayHelper } from '../helpers/array-helper';
 import { OperationResult } from '../models/operation-result';
 import { ITeamRepository } from '../repositories/team';

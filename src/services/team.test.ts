@@ -6,7 +6,6 @@ import { Team } from '../entities/team';
 import { User } from '../entities/user';
 import { TeamOwnerView } from '../entity-views/team-owner';
 import { TeamParticipantView } from '../entity-views/team-participant';
-import { container } from '../ioc';
 import { OperationResult } from '../models/operation-result';
 import { ITeamRepository } from '../repositories/team';
 import { IUserRepository } from '../repositories/user';

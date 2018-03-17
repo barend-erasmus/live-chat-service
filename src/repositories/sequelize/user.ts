@@ -1,6 +1,7 @@
 import { injectable } from 'inversify';
 import 'reflect-metadata';
 import * as Sequelize from 'sequelize';
+
 import { User } from '../../entities/user';
 import { IUserRepository } from '../user';
 import { BaseRepository } from './base';

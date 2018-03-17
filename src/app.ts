@@ -2,6 +2,7 @@ import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import * as express from 'express';
 import * as yargs from 'yargs';
+
 import { AuthenticationMiddleware } from './middleware/authentication';
 import { BaseRepository } from './repositories/sequelize/base';
 import { ApplicationRouter } from './routes/application';

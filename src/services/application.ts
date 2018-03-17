@@ -1,5 +1,6 @@
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
+
 import { Application } from '../entities/application';
 import { Team } from '../entities/team';
 import { User } from '../entities/user';

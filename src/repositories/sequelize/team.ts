@@ -1,6 +1,7 @@
 import { injectable } from 'inversify';
 import 'reflect-metadata';
 import * as Sequelize from 'sequelize';
+
 import { Team } from '../../entities/team';
 import { ArrayHelper } from '../../helpers/array-helper';
 import { ITeamRepository } from '../team';

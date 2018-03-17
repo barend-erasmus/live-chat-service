@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import 'mocha';
 import * as sinon from 'sinon';
+
 import { Team } from '../entities/team';
 import { User } from '../entities/user';
 import { TeamOwnerView } from '../entity-views/team-owner';

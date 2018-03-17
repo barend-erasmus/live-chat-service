@@ -1,5 +1,6 @@
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
+
 import { Team } from '../entities/team';
 import { User } from '../entities/user';
 import { TeamParticipantView } from '../entity-views/team-participant';

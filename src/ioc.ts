@@ -1,5 +1,6 @@
 import { Container, interfaces } from 'inversify';
 import 'reflect-metadata';
+
 import { Auth0OAuth2Gateway } from './gateways/auth0-oauth2';
 import { IOAuth2Gateway } from './interfaces/oauth2-gateway';
 import { IApplicationRepository } from './repositories/application';

@@ -1,5 +1,6 @@
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
+
 import { User } from '../entities/user';
 import { OperationResult } from '../models/operation-result';
 import { IUserRepository } from '../repositories/user';

@@ -1,6 +1,7 @@
 import { injectable } from 'inversify';
 import 'reflect-metadata';
 import * as Sequelize from 'sequelize';
+
 import { Application } from '../../entities/application';
 import { Team } from '../../entities/team';
 import { User } from '../../entities/user';

@@ -1,4 +1,5 @@
 import * as express from 'express';
+
 import { Team } from '../entities/team';
 import { LiveChatError } from '../errors/live-chat-error';
 import { container } from '../ioc';

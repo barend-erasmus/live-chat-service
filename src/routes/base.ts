@@ -5,7 +5,6 @@ import { OperationResult } from '../models/operation-result';
 export class BaseRouter {
 
     protected static sendError(error: Error, response: express.Response): void {
-        console.error(error);
         response.status(500).json(LiveChatError.fromError(error));
     }
 

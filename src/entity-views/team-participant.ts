@@ -1,6 +1,6 @@
-import { User } from './user';
+import { UserView } from './user';
 
-export class TeamParticipant extends User {
+export class TeamParticipantView extends UserView {
 
     constructor(
         public accepted: boolean,

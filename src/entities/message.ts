@@ -1,14 +1,16 @@
-import { Application } from './application';
-import { MessageSender } from './message-sender';
+import { ApplicationView } from '../entity-views/application';
+import { MessageSenderView } from '../entity-views/message-sender';
+import { Entity } from './entity';
 
-export class Message {
+export class Message extends Entity {
 
     constructor(
-        public application: Application,
-        public sender: MessageSender,
+        public application: ApplicationView,
+        id: number,
+        public sender: MessageSenderView,
         public text: string,
         public timestamp: Date,
     ) {
-
+        super(id);
     }
 }

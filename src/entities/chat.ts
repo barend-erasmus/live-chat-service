@@ -1,15 +1,15 @@
-import { Application } from './application';
-import { ChatOwner } from './chat-owner';
-import { MetaDatum } from './meta-datum';
+import { ApplicationView } from '../entity-views/application';
+import { ChatOwnerView } from '../entity-views/chat-owner';
+import { MetaDatum } from '../value-objects/meta-datum';
 
 export class Chat {
 
     constructor(
-        public application: Application,
+        public application: ApplicationView,
         public id: number,
         public metaData: MetaDatum[],
         public numberofUnreadMessages: number,
-        public owner: ChatOwner,
+        public owner: ChatOwnerView,
         public sessionId: string,
     ) {
 

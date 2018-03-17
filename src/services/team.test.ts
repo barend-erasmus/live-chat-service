@@ -2,9 +2,9 @@ import { expect } from 'chai';
 import 'mocha';
 import * as sinon from 'sinon';
 import { Team } from '../entities/team';
-import { TeamOwner } from '../entities/team-owner';
-import { TeamParticipant } from '../entities/team-participant';
 import { User } from '../entities/user';
+import { TeamOwnerView } from '../entity-views/team-owner';
+import { TeamParticipantView } from '../entity-views/team-participant';
 import { container } from '../ioc';
 import { OperationResult } from '../models/operation-result';
 import { ITeamRepository } from '../repositories/team';
@@ -58,7 +58,7 @@ describe('TeamService', () => {
 
         it('should return team', async () => {
             sinon.stub(teamRepository, 'find').returns(new Team(null, null, null, [
-                new TeamParticipant(false, 'email-address', 'display-name', 1),
+                new TeamParticipantView(false, 'email-address', 'display-name', 1),
             ]));
 
             const result: OperationResult<Team> = await teamService.acceptTeam(1, 'email-address');
@@ -68,7 +68,7 @@ describe('TeamService', () => {
 
         it('should set accepted to true', async () => {
             sinon.stub(teamRepository, 'find').returns(new Team(null, null, null, [
-                new TeamParticipant(false, 'email-address', 'display-name', 1),
+                new TeamParticipantView(false, 'email-address', 'display-name', 1),
             ]));
 
             const teamRepositoryUpdate: sinon.SinonSpy = sinon.spy(teamRepository, 'update');
@@ -123,71 +123,71 @@ describe('TeamService', () => {
         });
 
         it('should return team', async () => {
-            sinon.stub(teamRepository, 'find').returns(new Team(null, null, new TeamOwner(null, null, 1), null));
+            sinon.stub(teamRepository, 'find').returns(new Team(null, null, new TeamOwnerView(null, null, 1), null));
 
-            const result: OperationResult<Team> = await teamService.update(new Team(null, null, new TeamOwner(null, null, 1), null), 'email-address');
+            const result: OperationResult<Team> = await teamService.update(new Team(null, null, new TeamOwnerView(null, null, 1), null), 'email-address');
 
             expect(result.result).to.be.not.null;
         });
 
         it('should throw error given incorrect owner', async () => {
-            sinon.stub(teamRepository, 'find').returns(new Team(null, null, new TeamOwner(null, null, 2), null));
+            sinon.stub(teamRepository, 'find').returns(new Team(null, null, new TeamOwnerView(null, null, 2), null));
 
-            const result: OperationResult<Team> = await teamService.update(new Team(null, null, new TeamOwner(null, null, 2), null), 'email-address');
+            const result: OperationResult<Team> = await teamService.update(new Team(null, null, new TeamOwnerView(null, null, 2), null), 'email-address');
 
             expect(result.messages[0].message).to.be.eq('You are not the owner of this team.');
         });
 
         it('should remove removed participants', async () => {
-            sinon.stub(teamRepository, 'find').returns(new Team(null, null, new TeamOwner(null, null, 1), [
-                new TeamParticipant(false, null, null, 1),
-                new TeamParticipant(false, null, null, 2),
-                new TeamParticipant(false, null, null, 3),
+            sinon.stub(teamRepository, 'find').returns(new Team(null, null, new TeamOwnerView(null, null, 1), [
+                new TeamParticipantView(false, null, null, 1),
+                new TeamParticipantView(false, null, null, 2),
+                new TeamParticipantView(false, null, null, 3),
             ]));
 
             const teamRepositoryUpdate: sinon.SinonSpy = sinon.spy(teamRepository, 'update');
 
-            await teamService.update(new Team(null, null, new TeamOwner(null, null, 1), [
-                new TeamParticipant(false, null, null, 1),
-                new TeamParticipant(false, null, null, 3),
+            await teamService.update(new Team(null, null, new TeamOwnerView(null, null, 1), [
+                new TeamParticipantView(false, null, null, 1),
+                new TeamParticipantView(false, null, null, 3),
             ]), 'email-address');
 
             expect(teamRepositoryUpdate.args[0][0].participants.length).to.be.eq(2);
         });
 
         it('should add added participants', async () => {
-            sinon.stub(teamRepository, 'find').returns(new Team(null, null, new TeamOwner(null, null, 1), [
-                new TeamParticipant(false, null, null, 1),
-                new TeamParticipant(false, null, null, 2),
-                new TeamParticipant(false, null, null, 3),
+            sinon.stub(teamRepository, 'find').returns(new Team(null, null, new TeamOwnerView(null, null, 1), [
+                new TeamParticipantView(false, null, null, 1),
+                new TeamParticipantView(false, null, null, 2),
+                new TeamParticipantView(false, null, null, 3),
             ]));
 
             const teamRepositoryUpdate: sinon.SinonSpy = sinon.spy(teamRepository, 'update');
 
-            await teamService.update(new Team(null, null, new TeamOwner(null, null, 1), [
-                new TeamParticipant(false, null, null, 1),
-                new TeamParticipant(false, null, null, 2),
-                new TeamParticipant(false, null, null, 3),
-                new TeamParticipant(false, null, null, 4),
+            await teamService.update(new Team(null, null, new TeamOwnerView(null, null, 1), [
+                new TeamParticipantView(false, null, null, 1),
+                new TeamParticipantView(false, null, null, 2),
+                new TeamParticipantView(false, null, null, 3),
+                new TeamParticipantView(false, null, null, 4),
             ]), 'email-address');
 
             expect(teamRepositoryUpdate.args[0][0].participants.length).to.be.eq(4);
         });
 
         it('should add added participants with accepted to false', async () => {
-            sinon.stub(teamRepository, 'find').returns(new Team(null, null, new TeamOwner(null, null, 1), [
-                new TeamParticipant(false, null, null, 1),
-                new TeamParticipant(false, null, null, 2),
-                new TeamParticipant(false, null, null, 3),
+            sinon.stub(teamRepository, 'find').returns(new Team(null, null, new TeamOwnerView(null, null, 1), [
+                new TeamParticipantView(false, null, null, 1),
+                new TeamParticipantView(false, null, null, 2),
+                new TeamParticipantView(false, null, null, 3),
             ]));
 
             const teamRepositoryUpdate: sinon.SinonSpy = sinon.spy(teamRepository, 'update');
 
-            await teamService.update(new Team(null, null, new TeamOwner(null, null, 1), [
-                new TeamParticipant(false, null, null, 1),
-                new TeamParticipant(false, null, null, 2),
-                new TeamParticipant(false, null, null, 3),
-                new TeamParticipant(true, null, null, 4),
+            await teamService.update(new Team(null, null, new TeamOwnerView(null, null, 1), [
+                new TeamParticipantView(false, null, null, 1),
+                new TeamParticipantView(false, null, null, 2),
+                new TeamParticipantView(false, null, null, 3),
+                new TeamParticipantView(true, null, null, 4),
             ]), 'email-address');
 
             expect(teamRepositoryUpdate.args[0][0].participants[3].accepted).to.be.false;

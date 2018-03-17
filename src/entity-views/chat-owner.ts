@@ -1,6 +1,6 @@
-import { User } from './user';
+import { UserView } from './user';
 
-export class ChatOwner extends User {
+export class ChatOwnerView extends UserView {
 
     constructor(
         emailAddress: string,

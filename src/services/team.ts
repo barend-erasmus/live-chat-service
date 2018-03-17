@@ -1,9 +1,8 @@
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
 import { Team } from '../entities/team';
-import { TeamOwner } from '../entities/team-owner';
-import { TeamParticipant } from '../entities/team-participant';
 import { User } from '../entities/user';
+import { TeamParticipantView } from '../entity-views/team-participant';
 import { LiveChatError } from '../errors/live-chat-error';
 import { ArrayHelper } from '../helpers/array-helper';
 import { OperationResult } from '../models/operation-result';
@@ -33,7 +32,7 @@ export class TeamService {
             return result;
         }
 
-        const teamParticipant: TeamParticipant = team.participants.find((participant) => participant.id === user.id);
+        const teamParticipant: TeamParticipantView = team.participants.find((participant) => participant.id === user.id);
 
         if (!teamParticipant) {
             result.addMessage('not_found', null, 'You are not a participant of this team.');
@@ -55,7 +54,7 @@ export class TeamService {
         team.participants = team.participants ? team.participants : [];
 
         if (!team.participants.find((x) => x.id === team.owner.id)) {
-            team.participants.push(new TeamParticipant(true, team.owner.emailAddress, team.owner.displayName, team.owner.id));
+            team.participants.push(new TeamParticipantView(true, team.owner.emailAddress, team.owner.displayName, team.owner.id));
         }
 
         for (const participant of team.participants) {
@@ -98,7 +97,7 @@ export class TeamService {
 
         existingTeam.name = team.name;
 
-        const participantsUpdateResult = ArrayHelper.updateArray<TeamParticipant>(existingTeam.participants, team.participants, (item: TeamParticipant) => item.id);
+        const participantsUpdateResult = ArrayHelper.updateArray<TeamParticipantView>(existingTeam.participants, team.participants, (item: TeamParticipantView) => item.id);
 
         for (const participant of participantsUpdateResult.itemsToRemove) {
             const index: number = existingTeam.participants.indexOf(participant);

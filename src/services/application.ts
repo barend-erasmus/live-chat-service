@@ -9,7 +9,7 @@ import { ITeamRepository } from '../repositories/team';
 import { IUserRepository } from '../repositories/user';
 
 @injectable()
-export class TeamService {
+export class ApplicationService {
 
     constructor(
         @inject('IApplicationRepository')
@@ -33,18 +33,51 @@ export class TeamService {
             return result;
         }
 
-        throw new Error('');
+        if (team.owner.id !== user.id) {
+            result.addMessage('unauthorized', null, 'You are not the owner of this team.');
+            return result;
+        }
+
+        application = await this.applicationRepository.create(application);
+
+        return result;
     }
 
     public async find(applicationId: number, userName: string): Promise<OperationResult<Application>> {
-        throw new Error('');
+        const application: Application = await this.applicationRepository.find(applicationId);
+
+        return OperationResult.create<Application>(application);
     }
 
     public async list(teamId: number, userName: string): Promise<OperationResult<Application[]>> {
-        throw new Error('');
+        const applications: Application[] = await this.applicationRepository.list(teamId);
+
+        return OperationResult.create<Application[]>(applications);
     }
 
     public async update(application: Application, userName: string): Promise<OperationResult<Application>> {
-        throw new Error('');
+        const result: OperationResult<Application> = OperationResult.create<Application>(null);
+
+        const exisitingApplication: Application = await this.applicationRepository.find(application.id);
+
+        const user: User = await this.userRepository.findByUserName(userName);
+
+        const team: Team = await this.teamRepository.find(exisitingApplication.team.id);
+
+        if (!team) {
+            result.addMessage('not_found', null, 'Team does not exist.');
+            return result;
+        }
+
+        if (team.owner.id !== user.id) {
+            result.addMessage('unauthorized', null, 'You are not the owner of this team.');
+            return result;
+        }
+
+        exisitingApplication.name = application.name;
+
+        application = await this.applicationRepository.update(exisitingApplication);
+
+        return result;
     }
 }

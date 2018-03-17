@@ -3,9 +3,9 @@ import 'reflect-metadata';
 import * as Sequelize from 'sequelize';
 import { Application } from '../../entities/application';
 import { Team } from '../../entities/team';
-import { TeamOwner } from '../../entities/team-owner';
-import { TeamParticipant } from '../../entities/team-participant';
 import { User } from '../../entities/user';
+import { TeamOwnerView } from '../../entity-views/team-owner';
+import { TeamParticipantView } from '../../entity-views/team-participant';
 import { Models } from './models';
 
 @injectable()
@@ -67,8 +67,8 @@ export class BaseRepository {
         return new Team(
             team.id,
             team.name,
-            new TeamOwner(team.teamOwner.emailAddress, team.teamOwner.displayName, team.teamOwner.id),
-            team.teamParticipants.map((participant) => new TeamParticipant(participant.accepted, participant.user.emailAddress, participant.user.displayName, participant.user.id)),
+            new TeamOwnerView(team.teamOwner.emailAddress, team.teamOwner.displayName, team.teamOwner.id),
+            team.teamParticipants.map((participant) => new TeamParticipantView(participant.accepted, participant.user.emailAddress, participant.user.displayName, participant.user.id)),
         );
     }
 

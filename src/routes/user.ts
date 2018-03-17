@@ -1,5 +1,4 @@
 import * as express from 'express';
-import * as request from 'request-promise';
 import { User } from '../entities/user';
 import { LiveChatError } from '../errors/live-chat-error';
 import { IOAuth2Gateway } from '../interfaces/oauth2-gateway';

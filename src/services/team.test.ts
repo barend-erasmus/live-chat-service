@@ -130,7 +130,7 @@ describe('TeamService', () => {
             expect(result.result).to.be.not.null;
         });
 
-        it('should throw error given incorrect owner', async () => {
+        it('should return with validation message given incorrect owner', async () => {
             sinon.stub(teamRepository, 'find').returns(new Team(null, null, new TeamOwnerView(null, null, 2), null));
 
             const result: OperationResult<Team> = await teamService.update(new Team(null, null, new TeamOwnerView(null, null, 2), null), 'email-address');

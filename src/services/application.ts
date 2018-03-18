@@ -41,6 +41,8 @@ export class ApplicationService {
 
         application = await this.applicationRepository.create(application);
 
+        result.setResult(application);
+
         return result;
     }
 

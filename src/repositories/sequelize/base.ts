@@ -3,8 +3,11 @@ import 'reflect-metadata';
 import * as Sequelize from 'sequelize';
 
 import { Application } from '../../entities/application';
+import { Chat } from '../../entities/chat';
 import { Team } from '../../entities/team';
 import { User } from '../../entities/user';
+import { ApplicationView } from '../../entity-views/application';
+import { ChatOwnerView } from '../../entity-views/chat-owner';
 import { TeamOwnerView } from '../../entity-views/team-owner';
 import { TeamParticipantView } from '../../entity-views/team-participant';
 import { Models } from './models';
@@ -61,6 +64,17 @@ export class BaseRepository {
             application.id,
             application.name,
             this.mapToTeam(application.team),
+        );
+    }
+
+    protected mapToChat(chat: any): Chat {
+        return new Chat(
+            new ApplicationView(chat.application.id, chat.application.name),
+            chat.id,
+            null,
+            0,
+            new ChatOwnerView(chat.chatOwner.emailAddress, chat.chatOwner.displayName, chat.chatOwner.id),
+            chat.sessionId,
         );
     }
 

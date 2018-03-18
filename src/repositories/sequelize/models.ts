@@ -19,10 +19,6 @@ export class Models {
         });
 
         const ChatModel = sequelize.define('chat', {
-            numberofUnreadMessages: {
-                allowNull: false,
-                type: Sequelize.NUMERIC,
-            },
             sessionId: {
                 allowNull: false,
                 type: Sequelize.STRING,
@@ -30,13 +26,17 @@ export class Models {
         });
 
         const MessageModel = sequelize.define('message', {
+            beenRead: {
+                allowNull: false,
+                type: Sequelize.BOOLEAN,
+            },
             text: {
                 allowNull: false,
                 type: Sequelize.STRING,
             },
         });
 
-        const MetaDatumModel = sequelize.define('meta-datum', {
+        const MetaDatumModel = sequelize.define('metaDatum', {
             name: {
                 allowNull: false,
                 type: Sequelize.STRING,

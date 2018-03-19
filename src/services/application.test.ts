@@ -99,4 +99,52 @@ describe('ApplicationService', () => {
 
     });
 
+    describe('update', () => {
+
+        it('should return application', async () => {
+            sinon.stub(applicationRepository, 'find').returns(new Application(null, null, new TeamView(null, null, null)));
+            sinon.stub(teamRepository, 'find').returns(new Team(null, null, new TeamOwnerView(null, null, 1), []));
+
+            const result: OperationResult<Application> = await applicationService.update(new Application(null, 'name', new TeamView(null, null, null)), 'email-address');
+
+            expect(result.result).to.be.not.null;
+        });
+
+        it('should with validation message given empty team', async () => {
+            const result: OperationResult<Application> = await applicationService.update(new Application(null, null, null), 'email-address');
+
+            expect(result.messages[0].message).to.be.eq('Application requires a team.');
+        });
+
+        it('should with validation message given non-existing team', async () => {
+            const result: OperationResult<Application> = await applicationService.update(new Application(null, null, new TeamView(null, null, null)), 'email-address');
+
+            expect(result.messages[0].message).to.be.eq('Team does not exist.');
+        });
+
+        it('should with validation message given empty name', async () => {
+            const result: OperationResult<Application> = await applicationService.update(new Application(null, null, new TeamView(null, null, null)), 'email-address');
+
+            expect(result.messages[0].message).to.be.eq('Team does not exist.');
+        });
+
+        it('should with validation message given non-existing application', async () => {
+            sinon.stub(teamRepository, 'find').returns(new Team(null, null, new TeamOwnerView(null, null, 2), []));
+
+            const result: OperationResult<Application> = await applicationService.update(new Application(null, 'name', new TeamView(null, null, null)), 'email-address');
+
+            expect(result.messages[0].message).to.be.eq('Application does not exist.');
+        });
+
+        it('should with validation message given incorrect owner', async () => {
+            sinon.stub(applicationRepository, 'find').returns(new Application(null, null, new TeamView(null, null, null)));
+            sinon.stub(teamRepository, 'find').returns(new Team(null, null, new TeamOwnerView(null, null, 2), []));
+
+            const result: OperationResult<Application> = await applicationService.update(new Application(null, 'name', new TeamView(null, null, null)), 'email-address');
+
+            expect(result.messages[0].message).to.be.eq('You are not the owner of this team.');
+        });
+
+    });
+
 });

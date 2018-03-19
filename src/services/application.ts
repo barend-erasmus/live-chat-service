@@ -72,7 +72,7 @@ export class ApplicationService {
 
         if (!exisitingApplication) {
             result.addMessage('not_found', null, 'Application does not exist.');
-            return;
+            return result;
         }
 
         const user: User = await this.userRepository.findByUserName(userName);
@@ -88,6 +88,8 @@ export class ApplicationService {
         exisitingApplication.team = application.team;
 
         application = await this.applicationRepository.update(exisitingApplication);
+
+        result.setResult(application);
 
         return result;
     }

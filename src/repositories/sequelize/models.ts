@@ -30,9 +30,13 @@ export class Models {
                 allowNull: false,
                 type: Sequelize.BOOLEAN,
             },
-            text: {
+            sender: {
                 allowNull: false,
                 type: Sequelize.STRING,
+            },
+            text: {
+                allowNull: false,
+                type: Sequelize.TEXT,
             },
         });
 

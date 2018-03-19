@@ -25,14 +25,15 @@ export class ApplicationService {
     public async create(application: Application, userName: string): Promise<OperationResult<Application>> {
         const result: OperationResult<Application> = OperationResult.create<Application>(null);
 
+        await this.validateApplication(application, result);
+
+        if (result.hasErrors()) {
+            return result;
+        }
+
         const user: User = await this.userRepository.findByUserName(userName);
 
         const team: Team = await this.teamRepository.find(application.team.id);
-
-        if (!team) {
-            result.addMessage('not_found', null, 'Team does not exist.');
-            return result;
-        }
 
         if (team.owner.id !== user.id) {
             result.addMessage('unauthorized', null, 'You are not the owner of this team.');
@@ -61,16 +62,22 @@ export class ApplicationService {
     public async update(application: Application, userName: string): Promise<OperationResult<Application>> {
         const result: OperationResult<Application> = OperationResult.create<Application>(null);
 
+        await this.validateApplication(application, result);
+
+        if (result.hasErrors()) {
+            return result;
+        }
+
         const exisitingApplication: Application = await this.applicationRepository.find(application.id);
+
+        if (!exisitingApplication) {
+            result.addMessage('not_found', null, 'Application does not exist.');
+            return;
+        }
 
         const user: User = await this.userRepository.findByUserName(userName);
 
         const team: Team = await this.teamRepository.find(exisitingApplication.team.id);
-
-        if (!team) {
-            result.addMessage('not_found', null, 'Team does not exist.');
-            return result;
-        }
 
         if (team.owner.id !== user.id) {
             result.addMessage('unauthorized', null, 'You are not the owner of this team.');
@@ -78,9 +85,29 @@ export class ApplicationService {
         }
 
         exisitingApplication.name = application.name;
+        exisitingApplication.team = application.team;
 
         application = await this.applicationRepository.update(exisitingApplication);
 
         return result;
+    }
+
+    private async validateApplication(application: Application, result: OperationResult<Application>): Promise<void> {
+        if (!application.team) {
+            result.addMessage('validation', null, 'Application requires a team.');
+            return;
+        }
+
+        const team: Team = await this.teamRepository.find(application.team.id);
+
+        if (!team) {
+            result.addMessage('not_found', null, 'Team does not exist.');
+            return;
+        }
+
+        if (!application.name) {
+            result.addMessage('validation', null, 'Application requires a name.');
+            return;
+        }
     }
 }

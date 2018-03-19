@@ -60,6 +60,29 @@ export class ChatService {
     public async update(chat: Chat, userName: string): Promise<OperationResult<Chat>> {
         const result: OperationResult<Chat> = OperationResult.create<Chat>(null);
 
-        throw new Error();
+        const exisitingChat: Chat = await this.chatRepository.find(chat.id);
+
+        const user: User = await this.userRepository.findByUserName(userName);
+
+        const application: Team = await this.teamRepository.find(exisitingChat.application.id);
+
+        if (!application) {
+            result.addMessage('not_found', null, 'Application does not exist.');
+            return result;
+        }
+
+        if (exisitingChat.owner && exisitingChat.owner.id !== user.id) {
+            result.addMessage('unauthorized', null, 'You are not the owner of this chat.');
+            return result;
+        }
+
+        exisitingChat.application = chat.application;
+        exisitingChat.metaData = chat.metaData;
+        exisitingChat.owner = chat.owner;
+        exisitingChat.sessionId = chat.sessionId;
+
+        chat = await this.chatRepository.update(exisitingChat);
+
+        return result;
     }
 }

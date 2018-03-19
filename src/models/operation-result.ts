@@ -28,4 +28,12 @@ export class OperationResult<T> {
         return this;
     }
 
+    public toString(): string {
+        if (this.hasErrors()) {
+            return this.messages.map((message) => `${message.message}`).join('\r\n');
+        } else {
+            return 'No Errors';
+        }
+    }
+
 }

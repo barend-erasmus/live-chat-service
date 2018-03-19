@@ -96,6 +96,7 @@ export class TeamService {
         }
 
         existingTeam.name = team.name;
+        existingTeam.owner = team.owner;
 
         const participantsUpdateResult = ArrayHelper.updateArray<TeamParticipantView>(existingTeam.participants, team.participants, (item: TeamParticipantView) => item.id);
 

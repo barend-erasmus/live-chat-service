@@ -3,6 +3,7 @@ import 'reflect-metadata';
 
 import { Team } from '../entities/team';
 import { User } from '../entities/user';
+import { TeamOwnerView } from '../entity-views/team-owner';
 import { TeamParticipantView } from '../entity-views/team-participant';
 import { ArrayHelper } from '../helpers/array-helper';
 import { OperationResult } from '../models/operation-result';
@@ -49,7 +50,16 @@ export class TeamService {
     }
 
     public async create(team: Team, userName: string): Promise<OperationResult<Team>> {
-        team.owner = await this.userRepository.findByUserName(userName);
+        const result: OperationResult<Team> = OperationResult.create<Team>(null);
+
+        await this.validateTeam(result, team);
+
+        const user: User = await this.userRepository.findByUserName(userName);
+
+        if (team.owner.id !== user.id) {
+            result.addMessage('unauthorized', null, 'Cannot create a team for another user.');
+            return result;
+        }
 
         team.participants = team.participants ? team.participants : [];
 
@@ -63,7 +73,9 @@ export class TeamService {
 
         team = await this.teamRepository.create(team);
 
-        return OperationResult.create<Team>(team);
+        result.setResult(team);
+
+        return result;
     }
 
     public async find(teamId: number, userName: string): Promise<OperationResult<Team>> {
@@ -80,6 +92,8 @@ export class TeamService {
 
     public async update(team: Team, userName: string): Promise<OperationResult<Team>> {
         const result: OperationResult<Team> = OperationResult.create<Team>(null);
+
+        await this.validateTeam(result, team);
 
         const user: User = await this.userRepository.findByUserName(userName);
 
@@ -119,5 +133,33 @@ export class TeamService {
         result.setResult(team);
 
         return result;
+    }
+
+    private async validateTeam(result: OperationResult<Team>, team: Team): Promise<void> {
+        if (!team.owner) {
+            result.addMessage('validation', null, 'Team requires an owner.');
+            return;
+        }
+
+        const owner: User = await this.userRepository.findById(team.owner.id);
+
+        if (!owner) {
+            result.addMessage('not_found', null, 'Owner does not exist.');
+            return;
+        }
+
+        for (const participant of team.participants) {
+            const user: User = await this.userRepository.findById(participant.id);
+
+            if (!user) {
+                result.addMessage('not_found', null, 'Participant does not exist.');
+                continue;
+            }
+        }
+
+        if (!team.name) {
+            result.addMessage('validation', null, 'Team requires a name.');
+            return;
+        }
     }
 }

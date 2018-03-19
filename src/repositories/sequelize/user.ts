@@ -45,6 +45,22 @@ export class UserRepository extends BaseRepository implements IUserRepository {
         return this.mapToUser(result);
     }
 
+    public async findById(userId: number): Promise<User> {
+        const result: any = await BaseRepository.models.User.find({
+            where: {
+                id: {
+                    [Sequelize.Op.eq]: userId,
+                },
+            },
+        });
+
+        if (!result) {
+            return null;
+        }
+
+        return this.mapToUser(result);
+    }
+
     public async findByUserName(userName: string): Promise<User> {
         const result: any = await BaseRepository.models.User.find({
             where: {

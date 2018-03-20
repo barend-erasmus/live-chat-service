@@ -29,12 +29,9 @@ export class ChatService {
     public async create(chat: Chat, userName: string): Promise<OperationResult<Chat>> {
         const result: OperationResult<Chat> = OperationResult.create<Chat>(null);
 
-        const user: User = await this.userRepository.findByUserName(userName);
+        await this.validateChat(chat, result);
 
-        const application: Application = await this.applicationRepository.find(chat.application.id);
-
-        if (!application) {
-            result.addMessage('not_found', null, 'Application does not exist.');
+        if (result.hasErrors()) {
             return result;
         }
 
@@ -60,16 +57,20 @@ export class ChatService {
     public async update(chat: Chat, userName: string): Promise<OperationResult<Chat>> {
         const result: OperationResult<Chat> = OperationResult.create<Chat>(null);
 
-        const exisitingChat: Chat = await this.chatRepository.find(chat.id);
+        await this.validateChat(chat, result);
 
-        const user: User = await this.userRepository.findByUserName(userName);
-
-        const application: Team = await this.teamRepository.find(exisitingChat.application.id);
-
-        if (!application) {
-            result.addMessage('not_found', null, 'Application does not exist.');
+        if (result.hasErrors()) {
             return result;
         }
+
+        const exisitingChat: Chat = await this.chatRepository.find(chat.id);
+
+        if (!exisitingChat) {
+            result.addMessage('not_found', null, 'Chat does not exist.');
+            return result;
+        }
+
+        const user: User = await this.userRepository.findByUserName(userName);
 
         if (exisitingChat.owner && exisitingChat.owner.id !== user.id) {
             result.addMessage('unauthorized', null, 'You are not the owner of this chat.');
@@ -84,5 +85,33 @@ export class ChatService {
         chat = await this.chatRepository.update(exisitingChat);
 
         return result;
+    }
+
+    private async validateChat(chat: Chat, result: OperationResult<Chat>): Promise<void> {
+        if (!chat.application) {
+            result.addMessage('validation', null, 'Chat requires an application.');
+            return;
+        }
+
+        const application: Application = await this.applicationRepository.find(chat.application.id);
+
+        if (!application) {
+            result.addMessage('not_found', null, 'Application does not exist.');
+            return;
+        }
+
+        if (!chat.owner) {
+            const owner: User = await this.userRepository.findById(chat.owner.id);
+
+            if (!owner) {
+                result.addMessage('not_found', null, 'Owner does not exist.');
+                return;
+            }
+        }
+
+        if (!chat.sessionId) {
+            result.addMessage('validation', null, 'Chat requires a session Id.');
+            return;
+        }
     }
 }

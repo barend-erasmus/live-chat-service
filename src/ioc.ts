@@ -4,7 +4,9 @@ import 'reflect-metadata';
 import { Auth0OAuth2Gateway } from './gateways/auth0-oauth2';
 import { IOAuth2Gateway } from './interfaces/oauth2-gateway';
 import { IApplicationRepository } from './repositories/application';
+import { IMessageRepository } from './repositories/message';
 import { ApplicationRepository } from './repositories/sequelize/application';
+import { MessageRepository } from './repositories/sequelize/message';
 import { TeamRepository } from './repositories/sequelize/team';
 import { UserRepository } from './repositories/sequelize/user';
 import { ITeamRepository } from './repositories/team';
@@ -16,6 +18,7 @@ import { UserService } from './services/user';
 const container: Container = new Container();
 
 container.bind<IApplicationRepository>('IApplicationRepository').to(ApplicationRepository);
+container.bind<IMessageRepository>('IMessageRepository').to(MessageRepository);
 container.bind<ITeamRepository>('ITeamRepository').to(TeamRepository);
 container.bind<IUserRepository>('IUserRepository').to(UserRepository);
 

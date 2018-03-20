@@ -88,6 +88,38 @@ export class MessageRepository extends BaseRepository implements IMessageReposit
     }
 
     public async update(message: Message): Promise<Message> {
-        throw new Error();
+        const result: any = await BaseRepository.models.Message.find({
+            include: [
+                {
+                    include: [
+                        {
+                            model: BaseRepository.models.Application,
+                        },
+                        {
+                            model: BaseRepository.models.MetaDatum,
+                        },
+                        {
+                            as: 'chatOwner',
+                            model: BaseRepository.models.User,
+                        },
+                    ],
+                    model: BaseRepository.models.Chat,
+                },
+            ],
+            where: {
+                id: {
+                    [Sequelize.Op.eq]: message.id,
+                },
+            },
+        });
+
+        result.chatId = message.chat.id;
+        result.sender = message.sender;
+        result.text = message.text;
+        result.timestamp = message.timestamp.getTime();
+
+        await result.save();
+
+        return this.find(message.id);
     }
 }

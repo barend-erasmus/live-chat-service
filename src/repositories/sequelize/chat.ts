@@ -117,6 +117,30 @@ export class ChatRepository extends BaseRepository implements IChatRepository {
     }
 
     public async update(chat: Chat): Promise<Chat> {
-        throw new Error();
+        const result: any = await BaseRepository.models.Message.find({
+            include: [
+                {
+                    model: BaseRepository.models.Application,
+                },
+                {
+                    model: BaseRepository.models.MetaDatum,
+                },
+                {
+                    as: 'chatOwner',
+                    model: BaseRepository.models.User,
+                },
+            ],
+            where: {
+                id: {
+                    [Sequelize.Op.eq]: chat.id,
+                },
+            },
+        });
+
+        // TODO: Implement updates
+
+        await result.save();
+
+        return this.find(chat.id);
     }
 }

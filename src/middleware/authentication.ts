@@ -26,7 +26,7 @@ export class AuthenticationMiddleware {
                     Authorization: req.get('Authorization'),
                 },
                 json: true,
-                uri: `${argv.prod ? 'https://api.chat.developersworkpsace.co.za' : 'http://localhost:3000'}/api/user/info`,
+                uri: `${argv.prod ? 'https://api.chat.developersworkspace.co.za' : 'http://localhost:3000'}/api/user/info`,
             });
 
             req['user'] = authenticationResponse;

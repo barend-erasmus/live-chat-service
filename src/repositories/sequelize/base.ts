@@ -4,12 +4,15 @@ import * as Sequelize from 'sequelize';
 
 import { Application } from '../../entities/application';
 import { Chat } from '../../entities/chat';
+import { Message } from '../../entities/message';
 import { Team } from '../../entities/team';
 import { User } from '../../entities/user';
 import { ApplicationView } from '../../entity-views/application';
+import { ChatView } from '../../entity-views/chat';
 import { ChatOwnerView } from '../../entity-views/chat-owner';
 import { TeamOwnerView } from '../../entity-views/team-owner';
 import { TeamParticipantView } from '../../entity-views/team-participant';
+import { MetaDatum } from '../../value-objects/meta-datum';
 import { Models } from './models';
 
 @injectable()
@@ -75,6 +78,21 @@ export class BaseRepository {
             0,
             new ChatOwnerView(chat.chatOwner.emailAddress, chat.chatOwner.displayName, chat.chatOwner.id),
             chat.sessionId,
+        );
+    }
+
+    protected mapToMessage(message: any): Message {
+        return new Message(new ChatView(
+            new ApplicationView(message.chat.application.id, message.chat.application.name),
+            message.chat.id,
+            message.chat.metaDatums.map((x) => new MetaDatum(x.name, x.value)),
+            new ChatOwnerView(message.chat.chatOwner.emailAddress, message.chat.chatOwner.displayName, message.chat.chatOwner.id),
+            message.chat.sessionId,
+        ),
+            message.id,
+            message.sender,
+            message.text,
+            new Date(message.timestamp),
         );
     }
 

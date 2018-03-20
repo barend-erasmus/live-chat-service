@@ -32,6 +32,9 @@ describe('TeamService', () => {
         } as ITeamRepository;
 
         userRepository = {
+            findById: async (userId: number) => {
+                return new User('email-address', 'display-name', 1);
+            },
             findByUserName: async (userName: string) => {
                 return new User('email-address', 'display-name', 1);
             },
@@ -83,114 +86,81 @@ describe('TeamService', () => {
     describe('create', () => {
 
         it('should return team', async () => {
-            const result: OperationResult<Team> = await teamService.create(new Team(null, null, null, null), 'email-address');
+            const result: OperationResult<Team> = await teamService.create(new Team(null, 'name', new TeamOwnerView(null, null, 1), null), 'email-address');
 
             expect(result.result).to.be.not.null;
         });
 
-        it('should set owner', async () => {
-            const teamRepositoryCreate: sinon.SinonSpy = sinon.spy(teamRepository, 'create');
+        it('should with validation message given empty owner', async () => {
+            const result: OperationResult<Team> = await teamService.create(new Team(null, null, null, null), 'email-address');
 
-            await teamService.create(new Team(null, null, null, null), 'email-address');
-
-            expect(teamRepositoryCreate.args[0][0].owner).to.be.not.null;
+            expect(result.messages[0].message).to.be.eq('Team requires an owner.');
         });
 
-        it('should add owner to participant', async () => {
-            const teamRepositoryCreate: sinon.SinonSpy = sinon.spy(teamRepository, 'create');
+        it('should with validation message given non-existing owner', async () => {
+            sinon.stub(userRepository, 'findById').returns(null);
 
-            await teamService.create(new Team(null, null, null, null), 'email-address');
+            const result: OperationResult<Team> = await teamService.create(new Team(null, null, new TeamOwnerView(null, null, null), null), 'email-address');
 
-            expect(teamRepositoryCreate.args[0][0].participants.find((participant) => participant.emailAddress === 'email-address')).to.be.not.null;
+            expect(result.messages[0].message).to.be.eq('Owner does not exist.');
         });
 
-        it('should set all participants accepted to false', async () => {
-            const teamRepositoryCreate: sinon.SinonSpy = sinon.spy(teamRepository, 'create');
+        it('should with validation message given empty name', async () => {
+            const result: OperationResult<Team> = await teamService.create(new Team(null, null, new TeamOwnerView(null, null, null), null), 'email-address');
 
-            await teamService.create(new Team(null, null, null, null), 'email-address');
+            expect(result.messages[0].message).to.be.eq('Team requires a name.');
+        });
 
-            expect(teamRepositoryCreate.args[0][0].participants.filter((participant) => participant.accepted).length).to.be.eq(0);
+        it('should with validation message given incorrect owner', async () => {
+            const result: OperationResult<Team> = await teamService.create(new Team(null, 'name', new TeamOwnerView(null, null, 2), null), 'email-address');
+
+            expect(result.messages[0].message).to.be.eq('Cannot create a team for another user.');
         });
 
     });
 
     describe('update', () => {
 
-        it('should return with validation message given non existing team', async () => {
-            const result: OperationResult<Team> = await teamService.update(new Team(null, null, null, null), 'email-address');
-
-            expect(result.messages[0].message).to.be.eq('Team does not exist.');
-        });
-
         it('should return team', async () => {
             sinon.stub(teamRepository, 'find').returns(new Team(null, null, new TeamOwnerView(null, null, 1), null));
 
-            const result: OperationResult<Team> = await teamService.update(new Team(null, null, new TeamOwnerView(null, null, 1), null), 'email-address');
+            const result: OperationResult<Team> = await teamService.update(new Team(null, 'name', new TeamOwnerView(null, null, 1), null), 'email-address');
 
             expect(result.result).to.be.not.null;
         });
 
-        it('should return with validation message given incorrect owner', async () => {
+        it('should with validation message given empty owner', async () => {
+            const result: OperationResult<Team> = await teamService.update(new Team(null, null, null, null), 'email-address');
+
+            expect(result.messages[0].message).to.be.eq('Team requires an owner.');
+        });
+
+        it('should with validation message given non-existing owner', async () => {
+            sinon.stub(userRepository, 'findById').returns(null);
+
+            const result: OperationResult<Team> = await teamService.update(new Team(null, null, new TeamOwnerView(null, null, null), null), 'email-address');
+
+            expect(result.messages[0].message).to.be.eq('Owner does not exist.');
+        });
+
+        it('should with validation message given empty name', async () => {
+            const result: OperationResult<Team> = await teamService.update(new Team(null, null, new TeamOwnerView(null, null, null), null), 'email-address');
+
+            expect(result.messages[0].message).to.be.eq('Team requires a name.');
+        });
+
+        it('should with validation message given non-existing team', async () => {
+            const result: OperationResult<Team> = await teamService.update(new Team(null, 'name', new TeamOwnerView(null, null, null), null), 'email-address');
+
+            expect(result.messages[0].message).to.be.eq('Team does not exist.');
+        });
+
+        it('should with validation message given incorrect owner', async () => {
             sinon.stub(teamRepository, 'find').returns(new Team(null, null, new TeamOwnerView(null, null, 2), null));
 
-            const result: OperationResult<Team> = await teamService.update(new Team(null, null, new TeamOwnerView(null, null, 2), null), 'email-address');
+            const result: OperationResult<Team> = await teamService.update(new Team(null, 'name', new TeamOwnerView(null, null, 2), null), 'email-address');
 
             expect(result.messages[0].message).to.be.eq('You are not the owner of this team.');
-        });
-
-        it('should remove removed participants', async () => {
-            sinon.stub(teamRepository, 'find').returns(new Team(null, null, new TeamOwnerView(null, null, 1), [
-                new TeamParticipantView(false, null, null, 1),
-                new TeamParticipantView(false, null, null, 2),
-                new TeamParticipantView(false, null, null, 3),
-            ]));
-
-            const teamRepositoryUpdate: sinon.SinonSpy = sinon.spy(teamRepository, 'update');
-
-            await teamService.update(new Team(null, null, new TeamOwnerView(null, null, 1), [
-                new TeamParticipantView(false, null, null, 1),
-                new TeamParticipantView(false, null, null, 3),
-            ]), 'email-address');
-
-            expect(teamRepositoryUpdate.args[0][0].participants.length).to.be.eq(2);
-        });
-
-        it('should add added participants', async () => {
-            sinon.stub(teamRepository, 'find').returns(new Team(null, null, new TeamOwnerView(null, null, 1), [
-                new TeamParticipantView(false, null, null, 1),
-                new TeamParticipantView(false, null, null, 2),
-                new TeamParticipantView(false, null, null, 3),
-            ]));
-
-            const teamRepositoryUpdate: sinon.SinonSpy = sinon.spy(teamRepository, 'update');
-
-            await teamService.update(new Team(null, null, new TeamOwnerView(null, null, 1), [
-                new TeamParticipantView(false, null, null, 1),
-                new TeamParticipantView(false, null, null, 2),
-                new TeamParticipantView(false, null, null, 3),
-                new TeamParticipantView(false, null, null, 4),
-            ]), 'email-address');
-
-            expect(teamRepositoryUpdate.args[0][0].participants.length).to.be.eq(4);
-        });
-
-        it('should add added participants with accepted to false', async () => {
-            sinon.stub(teamRepository, 'find').returns(new Team(null, null, new TeamOwnerView(null, null, 1), [
-                new TeamParticipantView(false, null, null, 1),
-                new TeamParticipantView(false, null, null, 2),
-                new TeamParticipantView(false, null, null, 3),
-            ]));
-
-            const teamRepositoryUpdate: sinon.SinonSpy = sinon.spy(teamRepository, 'update');
-
-            await teamService.update(new Team(null, null, new TeamOwnerView(null, null, 1), [
-                new TeamParticipantView(false, null, null, 1),
-                new TeamParticipantView(false, null, null, 2),
-                new TeamParticipantView(false, null, null, 3),
-                new TeamParticipantView(true, null, null, 4),
-            ]), 'email-address');
-
-            expect(teamRepositoryUpdate.args[0][0].participants[3].accepted).to.be.false;
         });
 
     });

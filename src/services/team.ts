@@ -54,6 +54,10 @@ export class TeamService {
 
         await this.validateTeam(result, team);
 
+        if (result.hasErrors()) {
+            return result;
+        }
+
         const user: User = await this.userRepository.findByUserName(userName);
 
         if (team.owner.id !== user.id) {
@@ -148,12 +152,14 @@ export class TeamService {
             return;
         }
 
-        for (const participant of team.participants) {
-            const user: User = await this.userRepository.findById(participant.id);
+        if (team.participants) {
+            for (const participant of team.participants) {
+                const user: User = await this.userRepository.findById(participant.id);
 
-            if (!user) {
-                result.addMessage('not_found', null, 'Participant does not exist.');
-                continue;
+                if (!user) {
+                    result.addMessage('not_found', null, 'Participant does not exist.');
+                    continue;
+                }
             }
         }
 

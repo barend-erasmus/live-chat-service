@@ -53,6 +53,9 @@ describe('ApplicationService', () => {
         } as ITeamRepository;
 
         userRepository = {
+            findById: async (userId: number) => {
+                return new User('email-address', 'display-name', 1);
+            },
             findByUserName: async (userName: string) => {
                 return new User('email-address', 'display-name', 1);
             },

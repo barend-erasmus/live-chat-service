@@ -11,7 +11,7 @@ export class ApplicationRouter extends BaseRouter {
 
     public static async get(req: express.Request, res: express.Response) {
         try {
-            if (req.query.teamId) {
+            if (req.query.applicationId) {
                 const result: OperationResult<Application> = await container.get<ApplicationService>('ApplicationService').find(req.query.applicationId, req['user']['emailAddress']);
 
                 ApplicationRouter.sendOperationResult(res, result);

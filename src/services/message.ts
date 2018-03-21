@@ -46,8 +46,8 @@ export class MessageService {
         return OperationResult.create<Message>(message);
     }
 
-    public async list(teamId: number, userName: string): Promise<OperationResult<Message[]>> {
-        const messages: Message[] = await this.messageRepository.list(teamId);
+    public async list(chatId: number, userName: string): Promise<OperationResult<Message[]>> {
+        const messages: Message[] = await this.messageRepository.list(chatId);
 
         return OperationResult.create<Message[]>(messages);
     }

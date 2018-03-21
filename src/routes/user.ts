@@ -24,9 +24,16 @@ export class UserRouter extends BaseRouter {
         try {
             const token: string = UserRouter.getAuthorizationToken(req);
 
+            let result: OperationResult<User> = await container.get<UserService>('UserService').findByToken(token);
+
+            if (result.hasResult()) {
+                UserRouter.sendOperationResult(res, result);
+                return;
+            }
+
             const userInfo: any = await container.get<IOAuth2Gateway>('IOAuth2Gateway').getUserInfo(req.get('Authorization'));
 
-            const result: OperationResult<User> = await container.get<UserService>('UserService').login(new User(
+            result = await container.get<UserService>('UserService').login(new User(
                 userInfo.email,
                 userInfo.name,
                 null,

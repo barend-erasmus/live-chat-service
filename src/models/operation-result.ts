@@ -22,6 +22,10 @@ export class OperationResult<T> {
         return this.messages.length > 0;
     }
 
+    public hasResult(): boolean {
+        return this.result ? true : false;
+    }
+
     public setResult(result: T): OperationResult<T> {
         this.result = result;
 

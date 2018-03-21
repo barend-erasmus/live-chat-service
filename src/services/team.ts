@@ -99,6 +99,10 @@ export class TeamService {
 
         await this.validateTeam(result, team);
 
+        if (result.hasErrors()) {
+            return result;
+        }
+
         const user: User = await this.userRepository.findByUserName(userName);
 
         const existingTeam: Team = await this.teamRepository.find(team.id);

@@ -48,8 +48,8 @@ export class ChatService {
         return OperationResult.create<Chat>(chat);
     }
 
-    public async list(teamId: number, userName: string): Promise<OperationResult<Chat[]>> {
-        const chats: Chat[] = await this.chatRepository.list(teamId);
+    public async list(applicationId: number, userName: string): Promise<OperationResult<Chat[]>> {
+        const chats: Chat[] = await this.chatRepository.list(applicationId);
 
         return OperationResult.create<Chat[]>(chats);
     }

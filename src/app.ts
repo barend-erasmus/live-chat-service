@@ -6,6 +6,8 @@ import * as yargs from 'yargs';
 import { AuthenticationMiddleware } from './middleware/authentication';
 import { BaseRepository } from './repositories/sequelize/base';
 import { ApplicationRouter } from './routes/application';
+import { ChatRouter } from './routes/chat';
+import { MessageRouter } from './routes/message';
 import { TeamRouter } from './routes/team';
 import { UserRouter } from './routes/user';
 
@@ -20,6 +22,16 @@ app.route('/api/application')
 .get(AuthenticationMiddleware.shouldBeAuthenticated, ApplicationRouter.get)
 .post(AuthenticationMiddleware.shouldBeAuthenticated, ApplicationRouter.post)
 .put(AuthenticationMiddleware.shouldBeAuthenticated, ApplicationRouter.put);
+
+app.route('/api/chat')
+.get(AuthenticationMiddleware.shouldBeAuthenticated, ChatRouter.get)
+.post(AuthenticationMiddleware.shouldBeAuthenticated, ChatRouter.post)
+.put(AuthenticationMiddleware.shouldBeAuthenticated, ChatRouter.put);
+
+app.route('/api/message')
+.get(AuthenticationMiddleware.shouldBeAuthenticated, MessageRouter.get)
+.post(AuthenticationMiddleware.shouldBeAuthenticated, MessageRouter.post)
+.put(AuthenticationMiddleware.shouldBeAuthenticated, MessageRouter.put);
 
 app.route('/api/team')
 .get(AuthenticationMiddleware.shouldBeAuthenticated, TeamRouter.get)

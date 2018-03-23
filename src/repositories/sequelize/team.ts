@@ -69,6 +69,8 @@ export class TeamRepository extends BaseRepository implements ITeamRepository {
     }
 
     public async list(userName: string): Promise<Team[]> {
+        // TODO: Implement where clause
+
         const result: any[] = await BaseRepository.models.Team.findAll({
             include: [
                 {

@@ -12,11 +12,11 @@ export class MessageRouter extends BaseRouter {
     public static async get(req: express.Request, res: express.Response) {
         try {
             if (req.query.messageId) {
-                const result: OperationResult<Message> = await container.get<MessageService>('MessageService').find(req.query.messageId, req['user']['emailAddress']);
+                const result: OperationResult<Message> = await container.get<MessageService>('MessageService').find(req.query.messageId, req['user'] ? req['user']['emailAddress'] : null);
 
                 MessageRouter.sendOperationResult(res, result);
             } else {
-                const result: OperationResult<Message[]> = await container.get<MessageService>('MessageService').list(req.query.chatId, req['user']['emailAddress']);
+                const result: OperationResult<Message[]> = await container.get<MessageService>('MessageService').list(req.query.chatId, req['user'] ? req['user']['emailAddress'] : null);
 
                 MessageRouter.sendOperationResult(res, result);
             }
@@ -27,7 +27,7 @@ export class MessageRouter extends BaseRouter {
 
     public static async post(req: express.Request, res: express.Response) {
         try {
-            const result: OperationResult<Message> = await container.get<MessageService>('MessageService').create(req.body, req['user']['emailAddress']);
+            const result: OperationResult<Message> = await container.get<MessageService>('MessageService').create(req.body, req['user'] ? req['user']['emailAddress'] : null);
 
             MessageRouter.sendOperationResult(res, result);
         } catch (err) {

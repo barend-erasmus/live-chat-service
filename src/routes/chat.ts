@@ -12,11 +12,15 @@ export class ChatRouter extends BaseRouter {
     public static async get(req: express.Request, res: express.Response) {
         try {
             if (req.query.chatId) {
-                const result: OperationResult<Chat> = await container.get<ChatService>('ChatService').find(req.query.chatId, req['user']['emailAddress']);
+                const result: OperationResult<Chat> = await container.get<ChatService>('ChatService').find(req.query.chatId, req['user'] ? req['user']['emailAddress'] : null);
+
+                ChatRouter.sendOperationResult(res, result);
+            } else if (req.query.sessionId) {
+                const result: OperationResult<Chat> = await container.get<ChatService>('ChatService').find(req.query.sessionId, req['user'] ? req['user']['emailAddress'] : null);
 
                 ChatRouter.sendOperationResult(res, result);
             } else {
-                const result: OperationResult<Chat[]> = await container.get<ChatService>('ChatService').list(req.query.applicationId, req['user']['emailAddress']);
+                const result: OperationResult<Chat[]> = await container.get<ChatService>('ChatService').list(req.query.applicationId, req['user'] ? req['user']['emailAddress'] : null);
 
                 ChatRouter.sendOperationResult(res, result);
             }
@@ -27,7 +31,7 @@ export class ChatRouter extends BaseRouter {
 
     public static async post(req: express.Request, res: express.Response) {
         try {
-            const result: OperationResult<Chat> = await container.get<ChatService>('ChatService').create(req.body, req['user']['emailAddress']);
+            const result: OperationResult<Chat> = await container.get<ChatService>('ChatService').create(req.body, req['user'] ? req['user']['emailAddress'] : null);
 
             ChatRouter.sendOperationResult(res, result);
         } catch (err) {

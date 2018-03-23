@@ -93,8 +93,8 @@ export class Models {
         ChatModel.hasMany(MessageModel, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
         MessageModel.belongsTo(ChatModel, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
 
-        MessageModel.hasMany(MetaDatumModel, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
-        MetaDatumModel.belongsTo(MessageModel, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+        ChatModel.hasMany(MetaDatumModel, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+        MetaDatumModel.belongsTo(ChatModel, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
 
         UserModel.hasMany(ChatModel, { as: 'chatOwner', foreignKey: { allowNull: true, name: 'chatOwnerId' }, onDelete: 'CASCADE' });
         ChatModel.belongsTo(UserModel, { as: 'chatOwner', foreignKey: { allowNull: true, name: 'chatOwnerId' }, onDelete: 'CASCADE' });

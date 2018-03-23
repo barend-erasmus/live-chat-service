@@ -47,7 +47,7 @@ export class BaseRepository {
                 dialect: 'sqlite',
                 logging: false,
                 operatorsAliases: false,
-                // storage: 'database.sqlite',
+                storage: 'database.sqlite',
             });
 
             BaseRepository.models = Models.define(BaseRepository.sequelize);
@@ -70,13 +70,13 @@ export class BaseRepository {
         );
     }
 
-    protected mapToChat(chat: any): Chat {
+    protected mapToChat(chat: any, numerOfUnreadMessages: number): Chat {
         return new Chat(
             new ApplicationView(chat.application.id, chat.application.name),
             chat.id,
-            null,
-            0,
-            new ChatOwnerView(chat.chatOwner.emailAddress, chat.chatOwner.displayName, chat.chatOwner.id),
+            chat.metaData.map((metaDatum: any) => new MetaDatum(metaDatum.name, metaDatum.value)),
+            numerOfUnreadMessages,
+            chat.chatOwner ? new ChatOwnerView(chat.chatOwner.emailAddress, chat.chatOwner.displayName, chat.chatOwner.id) : null,
             chat.sessionId,
         );
     }

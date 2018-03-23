@@ -17,8 +17,8 @@ export class ChatRepository extends BaseRepository implements IChatRepository {
     public async create(chat: Chat): Promise<Chat> {
         const result: any = await BaseRepository.models.Chat.create({
             applicationId: chat.application.id,
-            chatOwnerId: chat.owner.id,
-            metaDatums: chat.metaData.map((metaDatum: MetaDatum) => {
+            chatOwnerId: chat.owner ? chat.owner.id : null,
+            metaData: chat.metaData.map((metaDatum: MetaDatum) => {
                 return {
                     name: metaDatum.name,
                     value: metaDatum.value,
@@ -26,12 +26,12 @@ export class ChatRepository extends BaseRepository implements IChatRepository {
             }),
             sessionId: chat.sessionId,
         }, {
-            include: [
-                {
-                    model: BaseRepository.models.MetaDatum,
-                },
-            ],
-        });
+                include: [
+                    {
+                        model: BaseRepository.models.MetaDatum,
+                    },
+                ],
+            });
 
         return this.find(result.id);
     }
@@ -61,7 +61,18 @@ export class ChatRepository extends BaseRepository implements IChatRepository {
             return null;
         }
 
-        return this.mapToChat(result);
+        const messageResult: any[] = await BaseRepository.models.Message.findAll({
+            where: {
+                beenRead: {
+                    [Sequelize.Op.eq]: false,
+                },
+                chatId: {
+                    [Sequelize.Op.eq]: result.id,
+                },
+            },
+        });
+
+        return this.mapToChat(result, messageResult.length);
     }
 
     public async findBySessionId(sessionId: string): Promise<Chat> {
@@ -89,7 +100,18 @@ export class ChatRepository extends BaseRepository implements IChatRepository {
             return null;
         }
 
-        return this.mapToChat(result);
+        const messageResult: any[] = await BaseRepository.models.Message.findAll({
+            where: {
+                beenRead: {
+                    [Sequelize.Op.eq]: false,
+                },
+                chatId: {
+                    [Sequelize.Op.eq]: result.id,
+                },
+            },
+        });
+
+        return this.mapToChat(result, messageResult.length);
     }
 
     public async list(applicationId: number): Promise<Chat[]> {
@@ -113,7 +135,24 @@ export class ChatRepository extends BaseRepository implements IChatRepository {
             },
         });
 
-        return result.map((team) => this.mapToChat(team));
+        const chats: Chat[] = [];
+
+        for (const item of result) {
+            const messageResult: any[] = await BaseRepository.models.Message.findAll({
+                where: {
+                    beenRead: {
+                        [Sequelize.Op.eq]: false,
+                    },
+                    chatId: {
+                        [Sequelize.Op.eq]: item.id,
+                    },
+                },
+            });
+
+            chats.push(this.mapToChat(item, messageResult.length));
+        }
+
+        return chats;
     }
 
     public async update(chat: Chat): Promise<Chat> {

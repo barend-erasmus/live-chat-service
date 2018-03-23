@@ -48,6 +48,12 @@ export class ChatService {
         return OperationResult.create<Chat>(chat);
     }
 
+    public async findBySessionId(sessionId: string, userName: string): Promise<OperationResult<Chat>> {
+        const chat: Chat = await this.chatRepository.findBySessionId(sessionId);
+
+        return OperationResult.create<Chat>(chat);
+    }
+
     public async list(applicationId: number, userName: string): Promise<OperationResult<Chat[]>> {
         const chats: Chat[] = await this.chatRepository.list(applicationId);
 
@@ -100,7 +106,7 @@ export class ChatService {
             return;
         }
 
-        if (!chat.owner) {
+        if (chat.owner) {
             const owner: User = await this.userRepository.findById(chat.owner.id);
 
             if (!owner) {

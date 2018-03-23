@@ -24,13 +24,13 @@ app.route('/api/application')
 .put(AuthenticationMiddleware.shouldBeAuthenticated, ApplicationRouter.put);
 
 app.route('/api/chat')
-.get(AuthenticationMiddleware.shouldBeAuthenticated, ChatRouter.get)
-.post(AuthenticationMiddleware.shouldBeAuthenticated, ChatRouter.post)
+.get(ChatRouter.get)
+.post(ChatRouter.post)
 .put(AuthenticationMiddleware.shouldBeAuthenticated, ChatRouter.put);
 
 app.route('/api/message')
-.get(AuthenticationMiddleware.shouldBeAuthenticated, MessageRouter.get)
-.post(AuthenticationMiddleware.shouldBeAuthenticated, MessageRouter.post)
+.get(MessageRouter.get)
+.post(MessageRouter.post)
 .put(AuthenticationMiddleware.shouldBeAuthenticated, MessageRouter.put);
 
 app.route('/api/team')
@@ -50,7 +50,7 @@ app.listen(argv.port || 3000, () => {
     console.log(`listening on port ${argv.port || 3000}`);
 });
 
-new BaseRepository().sync();
+// new BaseRepository().sync();
 
 export {
     app,

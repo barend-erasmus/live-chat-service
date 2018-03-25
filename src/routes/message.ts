@@ -27,7 +27,11 @@ export class MessageRouter extends BaseRouter {
 
     public static async post(req: express.Request, res: express.Response) {
         try {
-            const result: OperationResult<Message> = await container.get<MessageService>('MessageService').create(req.body, req['user'] ? req['user']['emailAddress'] : null);
+            const message: any = req.body;
+
+            message.timestamp = new Date(message.timestamp);
+
+            const result: OperationResult<Message> = await container.get<MessageService>('MessageService').create(message, req['user'] ? req['user']['emailAddress'] : null);
 
             MessageRouter.sendOperationResult(res, result);
         } catch (err) {

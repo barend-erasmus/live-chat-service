@@ -85,14 +85,14 @@ export class BaseRepository {
         return new Message(new ChatView(
             new ApplicationView(message.chat.application.id, message.chat.application.name),
             message.chat.id,
-            message.chat.metaDatums.map((x) => new MetaDatum(x.name, x.value)),
+            message.chat.metaData.map((x) => new MetaDatum(x.name, x.value)),
             new ChatOwnerView(message.chat.chatOwner.emailAddress, message.chat.chatOwner.displayName, message.chat.chatOwner.id),
             message.chat.sessionId,
         ),
             message.id,
             message.sender,
             message.text,
-            new Date(message.timestamp),
+            new Date(message.createdAt),
         );
     }
 

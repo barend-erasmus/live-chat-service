@@ -19,7 +19,6 @@ export class MessageRepository extends BaseRepository implements IMessageReposit
             chatId: message.chat.id,
             sender: message.sender,
             text: message.text,
-            timestamp: message.timestamp.getTime(),
         });
 
         return this.find(result.id);

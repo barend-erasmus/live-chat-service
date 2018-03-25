@@ -26,10 +26,6 @@ export class Models {
         });
 
         const MessageModel = sequelize.define('message', {
-            beenRead: {
-                allowNull: false,
-                type: Sequelize.BOOLEAN,
-            },
             sender: {
                 allowNull: false,
                 type: Sequelize.STRING,
@@ -98,9 +94,6 @@ export class Models {
 
         UserModel.hasMany(ChatModel, { as: 'chatOwner', foreignKey: { allowNull: true, name: 'chatOwnerId' }, onDelete: 'CASCADE' });
         ChatModel.belongsTo(UserModel, { as: 'chatOwner', foreignKey: { allowNull: true, name: 'chatOwnerId' }, onDelete: 'CASCADE' });
-
-        UserModel.hasMany(MessageModel, { as: 'messageSender', foreignKey: { allowNull: false, name: 'messageSenderId' }, onDelete: 'CASCADE' });
-        MessageModel.belongsTo(UserModel, { as: 'messageSender', foreignKey: { allowNull: false, name: 'messageSenderId' }, onDelete: 'CASCADE' });
 
         UserModel.hasMany(TeamModel, { as: 'teamOwner', foreignKey: { allowNull: false, name: 'teamOwnerId' }, onDelete: 'CASCADE' });
         TeamModel.belongsTo(UserModel, { as: 'teamOwner', foreignKey: { allowNull: false, name: 'teamOwnerId' }, onDelete: 'CASCADE' });

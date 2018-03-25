@@ -15,6 +15,7 @@ import { ITeamRepository } from './repositories/team';
 import { IUserRepository } from './repositories/user';
 import { ApplicationService } from './services/application';
 import { ChatService } from './services/chat';
+import { MessageService } from './services/message';
 import { TeamService } from './services/team';
 import { UserService } from './services/user';
 
@@ -28,6 +29,7 @@ container.bind<IUserRepository>('IUserRepository').to(UserRepository);
 
 container.bind<ApplicationService>('ApplicationService').to(ApplicationService);
 container.bind<ChatService>('ChatService').to(ChatService);
+container.bind<MessageService>('MessageService').to(MessageService);
 container.bind<TeamService>('TeamService').to(TeamService);
 container.bind<UserService>('UserService').to(UserService);
 

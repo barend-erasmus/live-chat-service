@@ -61,11 +61,9 @@ export class ChatRepository extends BaseRepository implements IChatRepository {
             return null;
         }
 
+        // TODO:
         const messageResult: any[] = await BaseRepository.models.Message.findAll({
             where: {
-                beenRead: {
-                    [Sequelize.Op.eq]: false,
-                },
                 chatId: {
                     [Sequelize.Op.eq]: result.id,
                 },
@@ -100,11 +98,9 @@ export class ChatRepository extends BaseRepository implements IChatRepository {
             return null;
         }
 
+        // TODO:
         const messageResult: any[] = await BaseRepository.models.Message.findAll({
             where: {
-                beenRead: {
-                    [Sequelize.Op.eq]: false,
-                },
                 chatId: {
                     [Sequelize.Op.eq]: result.id,
                 },
@@ -137,12 +133,10 @@ export class ChatRepository extends BaseRepository implements IChatRepository {
 
         const chats: Chat[] = [];
 
+        // TODO:
         for (const item of result) {
             const messageResult: any[] = await BaseRepository.models.Message.findAll({
                 where: {
-                    beenRead: {
-                        [Sequelize.Op.eq]: false,
-                    },
                     chatId: {
                         [Sequelize.Op.eq]: item.id,
                     },

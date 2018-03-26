@@ -58,6 +58,7 @@ export class MessageRepository extends BaseRepository implements IMessageReposit
     }
 
     public async list(chatId: number): Promise<Message[]> {
+        // TODO: Order by timestamp
         const result: any[] = await BaseRepository.models.Message.findAll({
             include: [
                 {

@@ -60,6 +60,10 @@ export class ChatService {
         return OperationResult.create<Chat[]>(chats);
     }
 
+    public async markAsRead(chatId: number, timestamp: Date, userName: string): Promise<void> {
+        await this.chatRepository.markAsRead(chatId, timestamp, userName);
+    }
+
     public async update(chat: Chat, userName: string): Promise<OperationResult<Chat>> {
         const result: OperationResult<Chat> = OperationResult.create<Chat>(null);
 

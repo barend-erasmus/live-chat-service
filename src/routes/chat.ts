@@ -29,6 +29,16 @@ export class ChatRouter extends BaseRouter {
         }
     }
 
+    public static async markAsRead(req: express.Request, res: express.Response) {
+        try {
+            await container.get<ChatService>('ChatService').markAsRead(req.query.chatId, req.query.timestamp, req['user'] ? req['user']['emailAddress'] : null);
+
+            res.json(true);
+        } catch (err) {
+            res.status(500).json(LiveChatError.fromError(err));
+        }
+    }
+
     public static async post(req: express.Request, res: express.Response) {
         try {
             const result: OperationResult<Chat> = await container.get<ChatService>('ChatService').create(req.body, req['user'] ? req['user']['emailAddress'] : null);

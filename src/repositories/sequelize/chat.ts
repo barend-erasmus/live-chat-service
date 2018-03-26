@@ -149,6 +149,10 @@ export class ChatRepository extends BaseRepository implements IChatRepository {
         return chats;
     }
 
+    public async markAsRead(chatId: number, timestamp: Date, userName: string): Promise<void> {
+        // TODO
+    }
+
     public async update(chat: Chat): Promise<Chat> {
         const result: any = await BaseRepository.models.Message.find({
             include: [

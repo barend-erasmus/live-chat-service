@@ -21,6 +21,7 @@ export class BaseRepository {
     protected static models: {
         Application: Sequelize.Model<{}, {}>,
         Chat: Sequelize.Model<{}, {}>,
+        ChatRecipient: Sequelize.Model<{}, {}>,
         Message: Sequelize.Model<{}, {}>,
         MetaDatum: Sequelize.Model<{}, {}>,
         Team: Sequelize.Model<{}, {}>,
@@ -86,7 +87,7 @@ export class BaseRepository {
             new ApplicationView(message.chat.application.id, message.chat.application.name),
             message.chat.id,
             message.chat.metaData.map((x) => new MetaDatum(x.name, x.value)),
-            new ChatOwnerView(message.chat.chatOwner.emailAddress, message.chat.chatOwner.displayName, message.chat.chatOwner.id),
+            message.chat.chatOwner ? new ChatOwnerView(message.chat.chatOwner.emailAddress, message.chat.chatOwner.displayName, message.chat.chatOwner.id) : null,
             message.chat.sessionId,
         ),
             message.id,

@@ -4,6 +4,7 @@ export class Models {
     public static define(sequelize: Sequelize.Sequelize): {
         Application: Sequelize.Model<{}, {}>,
         Chat: Sequelize.Model<{}, {}>,
+        ChatRecipient: Sequelize.Model<{}, {}>,
         Message: Sequelize.Model<{}, {}>,
         MetaDatum: Sequelize.Model<{}, {}>,
         Team: Sequelize.Model<{}, {}>,
@@ -22,6 +23,13 @@ export class Models {
             sessionId: {
                 allowNull: false,
                 type: Sequelize.STRING,
+            },
+        });
+
+        const ChatRecipientModel = sequelize.define('chatRecipient', {
+            timestamp: {
+                allowNull: false,
+                type: Sequelize.DATE,
             },
         });
 
@@ -89,11 +97,17 @@ export class Models {
         ChatModel.hasMany(MessageModel, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
         MessageModel.belongsTo(ChatModel, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
 
+        ChatModel.hasMany(ChatRecipientModel, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+        ChatRecipientModel.belongsTo(ChatModel, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+
         ChatModel.hasMany(MetaDatumModel, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
         MetaDatumModel.belongsTo(ChatModel, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
 
         UserModel.hasMany(ChatModel, { as: 'chatOwner', foreignKey: { allowNull: true, name: 'chatOwnerId' }, onDelete: 'CASCADE' });
         ChatModel.belongsTo(UserModel, { as: 'chatOwner', foreignKey: { allowNull: true, name: 'chatOwnerId' }, onDelete: 'CASCADE' });
+
+        UserModel.hasMany(ChatRecipientModel, { foreignKey: { allowNull: true }, onDelete: 'CASCADE' });
+        ChatRecipientModel.belongsTo(UserModel, { foreignKey: { allowNull: true }, onDelete: 'CASCADE' });
 
         UserModel.hasMany(TeamModel, { as: 'teamOwner', foreignKey: { allowNull: false, name: 'teamOwnerId' }, onDelete: 'CASCADE' });
         TeamModel.belongsTo(UserModel, { as: 'teamOwner', foreignKey: { allowNull: false, name: 'teamOwnerId' }, onDelete: 'CASCADE' });
@@ -107,6 +121,7 @@ export class Models {
         return {
             Application: ApplicationModel,
             Chat: ChatModel,
+            ChatRecipient: ChatRecipientModel,
             Message: MessageModel,
             MetaDatum: MetaDatumModel,
             Team: TeamModel,

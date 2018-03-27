@@ -84,7 +84,7 @@ export class MessageRepository extends BaseRepository implements IMessageReposit
             },
         });
 
-        return result.map((team) => this.mapToMessage(team));
+        return result.map((message) => this.mapToMessage(message));
     }
 
     public async update(message: Message): Promise<Message> {

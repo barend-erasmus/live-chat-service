@@ -28,6 +28,9 @@ app.route('/api/chat')
 .post(ChatRouter.post)
 .put(AuthenticationMiddleware.shouldBeAuthenticated, ChatRouter.put);
 
+app.route('/api/chat/markAsRead')
+.get(ChatRouter.markAsRead);
+
 app.route('/api/message')
 .get(MessageRouter.get)
 .post(MessageRouter.post)

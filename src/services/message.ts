@@ -84,7 +84,7 @@ export class MessageService {
             return;
         }
 
-        const chat: Chat = await this.chatRepository.find(message.chat.id);
+        const chat: Chat = await this.chatRepository.find(message.chat.id, null);
 
         if (!chat) {
             result.addMessage('not_found', null, 'Chat does not exist.');

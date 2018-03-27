@@ -14,7 +14,7 @@ export class ChatRepository extends BaseRepository implements IChatRepository {
         super();
     }
 
-    public async create(chat: Chat): Promise<Chat> {
+    public async create(chat: Chat, userName: string): Promise<Chat> {
         const result: any = await BaseRepository.models.Chat.create({
             applicationId: chat.application.id,
             chatOwnerId: chat.owner ? chat.owner.id : null,
@@ -33,10 +33,10 @@ export class ChatRepository extends BaseRepository implements IChatRepository {
                 ],
             });
 
-        return this.find(result.id);
+        return this.find(result.id, userName);
     }
 
-    public async find(chatId: number): Promise<Chat> {
+    public async find(chatId: number, userName: string): Promise<Chat> {
         const result: any = await BaseRepository.models.Chat.find({
             include: [
                 {
@@ -61,11 +61,29 @@ export class ChatRepository extends BaseRepository implements IChatRepository {
             return null;
         }
 
-        // TODO:
+        const chatRecipient: any = await BaseRepository.models.ChatRecipient.find({
+            include: [
+                {
+                    model: BaseRepository.models.User,
+                },
+            ],
+            where: {
+                '$user.emailAddress$': {
+                    [Sequelize.Op.eq]: userName,
+                },
+                'chatId': {
+                    [Sequelize.Op.eq]: result.id,
+                },
+            },
+        });
+
         const messageResult: any[] = await BaseRepository.models.Message.findAll({
             where: {
                 chatId: {
                     [Sequelize.Op.eq]: result.id,
+                },
+                createdAt: {
+                    [Sequelize.Op.gt]: chatRecipient ? chatRecipient.timestamp : 0,
                 },
             },
         });
@@ -73,7 +91,7 @@ export class ChatRepository extends BaseRepository implements IChatRepository {
         return this.mapToChat(result, messageResult.length);
     }
 
-    public async findBySessionId(sessionId: string): Promise<Chat> {
+    public async findBySessionId(sessionId: string, userName: string): Promise<Chat> {
         const result: any = await BaseRepository.models.Chat.find({
             include: [
                 {
@@ -98,11 +116,29 @@ export class ChatRepository extends BaseRepository implements IChatRepository {
             return null;
         }
 
-        // TODO:
+        const chatRecipient: any = await BaseRepository.models.ChatRecipient.find({
+            include: [
+                {
+                    model: BaseRepository.models.User,
+                },
+            ],
+            where: {
+                '$user.emailAddress$': {
+                    [Sequelize.Op.eq]: userName,
+                },
+                'chatId': {
+                    [Sequelize.Op.eq]: result.id,
+                },
+            },
+        });
+
         const messageResult: any[] = await BaseRepository.models.Message.findAll({
             where: {
                 chatId: {
                     [Sequelize.Op.eq]: result.id,
+                },
+                createdAt: {
+                    [Sequelize.Op.gt]: chatRecipient ? chatRecipient.timestamp : 0,
                 },
             },
         });
@@ -110,7 +146,7 @@ export class ChatRepository extends BaseRepository implements IChatRepository {
         return this.mapToChat(result, messageResult.length);
     }
 
-    public async list(applicationId: number): Promise<Chat[]> {
+    public async list(applicationId: number, userName: string): Promise<Chat[]> {
         const result: any[] = await BaseRepository.models.Chat.findAll({
             include: [
                 {
@@ -133,27 +169,79 @@ export class ChatRepository extends BaseRepository implements IChatRepository {
 
         const chats: Chat[] = [];
 
-        // TODO:
-        for (const item of result) {
-            const messageResult: any[] = await BaseRepository.models.Message.findAll({
+        for (const chat of result) {
+            const chatRecipient: any = await BaseRepository.models.ChatRecipient.find({
+                include: [
+                    {
+                        model: BaseRepository.models.User,
+                    },
+                ],
                 where: {
-                    chatId: {
-                        [Sequelize.Op.eq]: item.id,
+                    '$user.emailAddress$': {
+                        [Sequelize.Op.eq]: userName,
+                    },
+                    'chatId': {
+                        [Sequelize.Op.eq]: chat.id,
                     },
                 },
             });
 
-            chats.push(this.mapToChat(item, messageResult.length));
+            const messageResult: any[] = await BaseRepository.models.Message.findAll({
+                where: {
+                    chatId: {
+                        [Sequelize.Op.eq]: chat.id,
+                    },
+                    createdAt: {
+                        [Sequelize.Op.gt]: chatRecipient ? chatRecipient.timestamp : 0,
+                    },
+                },
+            });
+
+            chats.push(this.mapToChat(chat, messageResult.length));
         }
 
         return chats;
     }
 
     public async markAsRead(chatId: number, timestamp: Date, userName: string): Promise<void> {
-        // TODO
+        const existingChatRecipient: any = await BaseRepository.models.ChatRecipient.find({
+            include: [
+                {
+                    model: BaseRepository.models.User,
+                },
+            ],
+            where: {
+                '$user.emailAddress$': {
+                    [Sequelize.Op.eq]: userName,
+                },
+                'chatId': {
+                    [Sequelize.Op.eq]: chatId,
+                },
+            },
+        });
+
+        if (existingChatRecipient) {
+            existingChatRecipient.timestamp = timestamp;
+
+            await existingChatRecipient.save();
+        } else {
+            const user: any = await BaseRepository.models.User.find({
+                where: {
+                    emailAddress: {
+                        [Sequelize.Op.eq]: userName,
+                    },
+                },
+            });
+
+            await BaseRepository.models.ChatRecipient.create({
+                chatId,
+                timestamp,
+                userId: user.id,
+            });
+        }
     }
 
-    public async update(chat: Chat): Promise<Chat> {
+    public async update(chat: Chat, userName: string): Promise<Chat> {
         const result: any = await BaseRepository.models.Message.find({
             include: [
                 {
@@ -178,6 +266,6 @@ export class ChatRepository extends BaseRepository implements IChatRepository {
 
         await result.save();
 
-        return this.find(chat.id);
+        return this.find(chat.id, userName);
     }
 }

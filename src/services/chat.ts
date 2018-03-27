@@ -35,7 +35,7 @@ export class ChatService {
             return result;
         }
 
-        chat = await this.chatRepository.create(chat);
+        chat = await this.chatRepository.create(chat, userName);
 
         result.setResult(chat);
 
@@ -43,19 +43,19 @@ export class ChatService {
     }
 
     public async find(chatId: number, userName: string): Promise<OperationResult<Chat>> {
-        const chat: Chat = await this.chatRepository.find(chatId);
+        const chat: Chat = await this.chatRepository.find(chatId, userName);
 
         return OperationResult.create<Chat>(chat);
     }
 
     public async findBySessionId(sessionId: string, userName: string): Promise<OperationResult<Chat>> {
-        const chat: Chat = await this.chatRepository.findBySessionId(sessionId);
+        const chat: Chat = await this.chatRepository.findBySessionId(sessionId, userName);
 
         return OperationResult.create<Chat>(chat);
     }
 
     public async list(applicationId: number, userName: string): Promise<OperationResult<Chat[]>> {
-        const chats: Chat[] = await this.chatRepository.list(applicationId);
+        const chats: Chat[] = await this.chatRepository.list(applicationId, userName);
 
         return OperationResult.create<Chat[]>(chats);
     }
@@ -73,7 +73,7 @@ export class ChatService {
             return result;
         }
 
-        const exisitingChat: Chat = await this.chatRepository.find(chat.id);
+        const exisitingChat: Chat = await this.chatRepository.find(chat.id, userName);
 
         if (!exisitingChat) {
             result.addMessage('not_found', null, 'Chat does not exist.');
@@ -92,7 +92,7 @@ export class ChatService {
         exisitingChat.owner = chat.owner;
         exisitingChat.sessionId = chat.sessionId;
 
-        chat = await this.chatRepository.update(exisitingChat);
+        chat = await this.chatRepository.update(exisitingChat, userName);
 
         return result;
     }
